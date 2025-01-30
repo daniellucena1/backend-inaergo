@@ -18,6 +18,7 @@ model Admin {
   name        String
   email       String    @unique
   senha       String   
+  permission  Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @default(now())
 }
@@ -27,6 +28,7 @@ model Funcionario {
   name              String    
   email             String          @unique
   senha             String
+  permission        Boolean         @default(false)
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @default(now())
 }

@@ -2,19 +2,20 @@ import express from 'express';
 import { adminController } from '../controllers/adminController';
 import { funcionarioController } from '../controllers/funcionarioController';
 import { authMiddleware } from '../middlewares/authMiddleware';
+import { authController } from '../controllers/authController';
 
 const router = express.Router();
 
 // Rotas de Admin (protegidas por autenticação)
-router.post('/admin', authMiddleware.login, adminController.createAdmin);
-router.get('/admin/:id', authMiddleware.login, adminController.getAdminById);
-router.put('/admin/:id', authMiddleware.login, adminController.updateAdmin);
-router.delete('/admin/:id', authMiddleware.login, adminController.deleteAdmin);
+router.post('/admin', authController.loginAdmin, adminController.createAdmin);
+router.get('/admin/:id', authController.loginAdmin, adminController.getAdminById);
+router.put('/admin/:id', authController.loginAdmin, adminController.updateAdmin);
+router.delete('/admin/:id', authController.loginAdmin, adminController.deleteAdmin);
 
 // Rotas de Funcionario (protegidas por autenticação)
-router.post('/funcionario', authMiddleware.login, funcionarioController.createfuncionario);
-router.get('/funcionario/:id', authMiddleware.login, funcionarioController.getFuncionarioById);
-router.put('/funcionario/:id', authMiddleware.login, funcionarioController.updateFuncionario);
-router.delete('/funcionario/:id', authMiddleware.login, funcionarioController.deleteFuncionario);
+router.post('/funcionario', authController.loginFuncionario, funcionarioController.createfuncionario);
+router.get('/funcionario/:id', authController.loginFuncionario, funcionarioController.getFuncionarioById);
+router.put('/funcionario/:id', authController.loginFuncionario, funcionarioController.updateFuncionario);
+router.delete('/funcionario/:id', authController.loginFuncionario, funcionarioController.deleteFuncionario);
 
 export default router;

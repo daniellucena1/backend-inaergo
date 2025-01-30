@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../services/prisma';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
 
 export const adminController = {
   async createAdmin(req: Request, res: Response) {
