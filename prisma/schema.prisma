@@ -14,46 +14,56 @@ datasource db {
 }
 
 model Admin {
-  id          Int       @id @default(autoincrement())
-  name        String
-  email       String    @unique
-  senha       String   
-  permission  Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  permission Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 model Employee {
-  id                Int             @id @default(autoincrement())
-  name              String    
-  email             String          @unique
-  senha             String
-  permission        Boolean         @default(false)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @default(now())
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  permission Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
-model Formulario {
-  id                Int             @id @default(autoincrement())
-  titulo            String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @default(now())
-  perguntas         Pergunta[]
+model Form {
+  id        Int        @id @default(autoincrement())
+  title     String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+  questions Question[]
 }
 
-model Pergunta {
-  id                Int             @id @default(autoincrement())
-  texto             String 
-  formularioId      Int
-  formulario        Formulario      @relation(fields: [formularioId], references: [id])
-  respostas         Resposta[]
+model Question {
+  id     Int      @id @default(autoincrement())
+  text   String
+  formId Int
+  form   Form     @relation(fields: [formId], references: [id])
+  answer Answer[]
 }
 
-model Resposta {
-  id                Int             @id @default(autoincrement())
-  funcionarioId     Int
-  perguntaId        Int
-  texto             String
-  createdAt         DateTime        @default(now())
-  pergunta          Pergunta        @relation(fields: [perguntaId], references: [id])
+model Answer {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  questionId Int
+  text       String
+  createdAt  DateTime @default(now())
+  question   Question @relation(fields: [questionId], references: [id])
+}
+
+model Manager {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  permission Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }

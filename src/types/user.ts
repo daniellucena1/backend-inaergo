@@ -1,3 +1,3 @@
-import { Admin, Employee } from '@prisma/client';
+import { Admin, Employee, Manager } from '@prisma/client';
 
-export type User = Admin | Employee;
+export type User = Admin | Employee | Manager;
