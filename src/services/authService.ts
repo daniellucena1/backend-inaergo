@@ -12,31 +12,41 @@ if (!JWT_SECRET) {
 
 export const authService = {
 
-  loginAdmin: async (email: string, senha: string) => {
+  loginAdmin: async (email: string, password: string) => {
     const user = await prisma.admin.findUnique({ where: { email: email } });
 
     if (!user) {
       throw new Error("Admin não encontrado");
     }
 
-    return authService.handleLogin(user, senha);
+    return authService.handleLogin(user, password);
   },
 
-  loginFuncionario: async (email: string, senha: string) => {
+  loginFuncionario: async (email: string, password: string) => {
     const user = await prisma.employee.findUnique({ where: { email: email } });
 
     if (!user) {
       throw new Error("Funcionário não encontrado");
     }
 
-    return authService.handleLogin(user, senha);
+    return authService.handleLogin(user, password);
   },
 
-  handleLogin: async (user: User, senha: string) => {
-    const validPassword = await bcrypt.compare(senha, user.senha);
+  loginManager: async (email: string, password: string) => {
+    const user = await prisma.manager.findUnique({ where: { email: email } });
+
+    if (!user) {
+      throw new Error("Admin não encontrado");
+    }
+
+    return authService.handleLogin(user, password);
+  },
+
+  handleLogin: async (user: User, password: string) => {
+    const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      throw new Error("Senha inválida");
+      throw new Error("password inválida");
     }
 
     const token = jwt.sign(
@@ -50,7 +60,7 @@ export const authService = {
       }
     );
 
-    return { token, user };
+    return { token, user: { ...user, password: undefined } };
   },
 
   verifyToken: (token: string) => {
