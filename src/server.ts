@@ -1,13 +1,15 @@
 import express from "express";
-import routes from './routes/Routes';
 import dotenv from 'dotenv';
+import authRoutes from './routes/authRoute'
+import adminRoutes from './routes/adminRoute'
+import employeeRoutes from './routes/employeeRoute';
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(routes);
+app.use(authRoutes, adminRoutes, employeeRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);

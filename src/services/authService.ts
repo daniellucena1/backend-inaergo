@@ -1,27 +1,21 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from './prisma';
-import { z } from 'zod';
-import { permission } from 'process';
 import { User } from '../types/user';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-if ( !JWT_SECRET ) {
+if (!JWT_SECRET) {
   throw new Error("A variável JWT_SECRET não está definida no .env.");
 }
 
-const loginSchema = z.object({
-  email: z.string().email("E-mail inválido"),
-  senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres")
-});
 
 export const authService = {
 
   loginAdmin: async (email: string, senha: string) => {
-    const user = await prisma.admin.findUnique({ where: { email }});
+    const user = await prisma.admin.findUnique({ where: { email: email } });
 
-    if ( !user ) {
+    if (!user) {
       throw new Error("Admin não encontrado");
     }
 
@@ -29,19 +23,19 @@ export const authService = {
   },
 
   loginFuncionario: async (email: string, senha: string) => {
-    const user = await prisma.funcionario.findUnique({ where: { email }});
+    const user = await prisma.employee.findUnique({ where: { email: email } });
 
-    if ( !user ) {
+    if (!user) {
       throw new Error("Funcionário não encontrado");
     }
 
     return authService.handleLogin(user, senha);
   },
 
-  handleLogin: async (user: any, senha: string) => {
+  handleLogin: async (user: User, senha: string) => {
     const validPassword = await bcrypt.compare(senha, user.senha);
 
-    if ( !validPassword ) {
+    if (!validPassword) {
       throw new Error("Senha inválida");
     }
 
@@ -64,6 +58,7 @@ export const authService = {
       const decoded = jwt.verify(token, JWT_SECRET) as User;
       return decoded;
     } catch (error) {
+      console.error(error);
       throw new Error("Token inválido");
     }
   }

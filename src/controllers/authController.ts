@@ -5,34 +5,39 @@ export const authController = {
   loginAdmin: async (req: Request, res: Response) => {
     try {
       const { email, senha } = req.body;
+
+      if (!email || !senha) {
+        res.status(400).json({ error: "Preencha os campos corretamente" });
+      }
+
       const { token, user } = await authService.loginAdmin(email, senha);
       res.json({ token, user });
     } catch (error) {
-      return authController.handleLoginError(error, res);
+      return authController.handleLoginError(error as Error, res);
     }
   },
 
-  loginFuncionario: async (req: Request, res:Response) => {
+  loginFuncionario: async (req: Request, res: Response) => {
     try {
       const { email, senha } = req.body;
       const { token, user } = await authService.loginFuncionario(email, senha);
       res.json({ token, user });
     } catch (error) {
-      return authController.handleLoginError(error, res);
+      return authController.handleLoginError(error as Error, res);
     }
   },
 
-  handleLoginError: (error: any, res: Response) => {
+  handleLoginError: (error: Error, res: Response) => {
     console.error("Erro no login: ", error);
-  
-    if ( error.message === "Admin não encontrado" || error.message === "Funcionário não encontrado") {
+
+    if (error.message === "Admin não encontrado" || error.message === "Funcionário não encontrado") {
       res.status(404).json({ error: error.message });
     }
-  
+
     if (error.message === "Senha inválida") {
       res.status(401).json({ error: error.message });
     }
-  
+
     res.status(500).json({ error: error.message });
   }
 };
