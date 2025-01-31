@@ -399,8 +399,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Docker Compose
-docker-compose.yml
-
 # Environment do prisma
 .env
