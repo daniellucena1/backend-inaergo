@@ -14,18 +14,12 @@ importers:
       '@prisma/client':
         specifier: ^6.2.1
         version: 6.3.0(prisma@6.3.0(typescript@5.7.3))(typescript@5.7.3)
-      backend-newergosis:
-        specifier: 'file:'
-        version: file:(react-hook-form@7.54.2(react@19.0.0))(typescript@5.7.3)
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
       cors:
         specifier: ^2.8.5
         version: 2.8.5
-      dlx:
-        specifier: ^0.2.1
-        version: 0.2.1
       express:
         specifier: ^4.21.2
         version: 4.21.2
@@ -461,9 +455,6 @@ packages:
   array-flatten@1.1.1:
     resolution: {integrity: sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==}
 
-  'backend-newergosis@file:':
-    resolution: {directory: '', type: directory}
-
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
@@ -567,9 +558,6 @@ packages:
   destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
-
-  dlx@0.2.1:
-    resolution: {integrity: sha512-oXRVvaKG942UX0HNIDr+Eykp6uGhcjkk719dGBYNqSagrwZ0l4ryA4iTh2n/l23MinmXISqzt4uVLSS2cUYm7A==}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -1164,9 +1152,6 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  underscore@1.13.7:
-    resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
-
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
@@ -1540,22 +1525,6 @@ snapshots:
 
   array-flatten@1.1.1: {}
 
-  backend-newergosis@file:(react-hook-form@7.54.2(react@19.0.0))(typescript@5.7.3):
-    dependencies:
-      '@hookform/resolvers': 3.10.0(react-hook-form@7.54.2(react@19.0.0))
-      '@prisma/client': 6.3.0(prisma@6.3.0(typescript@5.7.3))(typescript@5.7.3)
-      bcryptjs: 2.4.3
-      cors: 2.8.5
-      dlx: 0.2.1
-      express: 4.21.2
-      jsonwebtoken: 9.0.2
-      prisma: 6.3.0(typescript@5.7.3)
-      zod: 3.24.1
-    transitivePeerDependencies:
-      - react-hook-form
-      - supports-color
-      - typescript
-
   balanced-match@1.0.2: {}
 
   bcryptjs@2.4.3: {}
@@ -1653,10 +1622,6 @@ snapshots:
   depd@2.0.0: {}
 
   destroy@1.2.0: {}
-
-  dlx@0.2.1:
-    dependencies:
-      underscore: 1.13.7
 
   dunder-proto@1.0.1:
     dependencies:
@@ -2287,8 +2252,6 @@ snapshots:
       - supports-color
 
   typescript@5.7.3: {}
-
-  underscore@1.13.7: {}
 
   undici-types@6.20.0: {}
 

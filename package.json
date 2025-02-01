@@ -26,10 +26,8 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.2.1",
-    "backend-newergosis": "file:",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dlx": "^0.2.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.2.1",

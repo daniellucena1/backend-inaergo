@@ -3,27 +3,73 @@ import { employeeService } from "../services/empĺoyeeService";
 
 export const employeeController = {
   async createEmployee(req: Request, res: Response) {
-    const { name, email, password } = req.body;
+    try {
+      const { name, email, password } = req.body;
 
-    employeeService.createEmployee(name, email, password, res);
+      const employee = await employeeService.createEmployee(name, email, password);
+
+      res.json(employee);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      }
+
+      res.status(500).json({ error: 'Erro ao criar usuário' });
+    }
   },
 
   async getEmployeeById(req: Request, res: Response) {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    employeeService.getEmployeeById(parseInt(id), res);
+      const employee = await employeeService.getEmployeeById(parseInt(id));
+
+      res.json(employee);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({ error: error.message });
+      }
+
+      res.status(500).json({ error: 'Erro ao buscar usuário' });
+    }
   },
 
   async updateEmployee(req: Request, res: Response) {
-    const { id } = req.params;
-    const { name, email, password } = req.body;
+    try {
+      const { id } = req.params;
+      const { name, email, password } = req.body;
 
-    employeeService.updateEmployee(parseInt(id), name, email, password, res);
+      const e = await employeeService.updateEmployee(parseInt(id), name, email, password);
+
+      res.json(e);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({ error: error.message });
+      }
+
+      res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
   },
 
   async deleteEmployee(req: Request, res: Response) {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    employeeService.deleteEmployee(parseInt(id), res);
+      await employeeService.deleteEmployee(parseInt(id));
+
+      res.json({
+        message: "Usuario deletado com sucesso",
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({
+          error: error.message,
+        });
+      }
+
+      res.status(500).json({
+        error: "Erro ao deletar usuário",
+      });
+    }
   }
 }
