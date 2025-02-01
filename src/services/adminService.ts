@@ -3,24 +3,24 @@ import prisma from "../services/prisma";
 import bcrypt from "bcryptjs";
 
 export const adminService = {
-  createAdmin: async (name: string, email: string, password: string, res: Response) => {
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const admin = await prisma.admin.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword
-        },
-        omit: {
-          password: true
-        }
-      });
-      res.status(201).json(admin);
-    } catch (error) {
-      console.error(error);
-      res.status(401).json({ error: 'Erro ao criar usuário' });
+  createAdmin: async (name: string, email: string, password: string) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const admin = await prisma.admin.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword
+      },
+      omit: {
+        password: true
+      }
+    });
+
+    if (!admin) {
+      throw new Error('Erro ao criar usuário');
     }
+
+    return admin;
   },
 
   getAdminById: async (id: number, res: Response) => {

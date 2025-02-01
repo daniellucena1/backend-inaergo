@@ -4,15 +4,26 @@ import { adminService } from '../services/adminService';
 
 export const adminController = {
   async createAdmin(req: Request, res: Response) {
-    const schema = z.object({
-      name: z.string(),
-      email: z.string(),
-      password: z.string()
-    })
+    try {
+      const schema = z.object({
+        name: z.string(),
+        email: z.string(),
+        password: z.string()
+      })
 
-    const { name, email, password } = schema.parse(req.body);
+      const { name, email, password } = schema.parse(req.body);
 
-    adminService.createAdmin(name, email, password, res);
+      const admin = adminService.createAdmin(name, email, password);
+
+      res.json(admin);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: error.errors });
+      }
+
+      res.status(500).json({ error: 'Erro ao criar usuário' });
+    }
   },
 
   async getAdminById(req: Request, res: Response) {
