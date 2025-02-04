@@ -34,17 +34,19 @@ model Employee {
 }
 
 model Form {
-  id        Int        @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
   questions Question[]
 }
 
 model Question {
-  id     Int      @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   text   String
   formId Int
+
   form   Form     @relation(fields: [formId], references: [id])
   answer Answer[]
 }
@@ -55,7 +57,9 @@ model Answer {
   questionId Int
   text       String
   createdAt  DateTime @default(now())
-  question   Question @relation(fields: [questionId], references: [id])
+  updatedAt  DateTime @default(now())
+
+  question Question @relation(fields: [questionId], references: [id])
 }
 
 model Manager {

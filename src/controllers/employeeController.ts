@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { employeeService } from "../services/empĺoyeeService";
+import { employeeService } from "../services/employeeService";
 
 export const employeeController = {
   async createEmployee(req: Request, res: Response) {
