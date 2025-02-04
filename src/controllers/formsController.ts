@@ -3,19 +3,7 @@ import { formsService } from "../services/formsService";
 import { z } from "zod";
 import { FormsDTO } from "../types/formsDTO";
 
-
-
 export const formsController = {
-    // createFormPage: async (req: Request, res: Response) => {
-    //     const path = req.file?.path;
-    //     try {
-    //         const employee = await formsService.createForm(path);
-    //         res.status(201).json(employee);
-    //     } catch (error) {
-    //         res.status(500).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
-    //     }
-    // },
-
     createForm: async (req: Request, res: Response) => {
         try {
             const schema = z.object({
@@ -42,8 +30,8 @@ export const formsController = {
 
     getForm: async (req: Request, res: Response) => {
         try {
-            const employee: FormsDTO = await formsService.getForm();
-            res.status(200).json(employee);
+            const form: FormsDTO = await formsService.getForm();
+            res.status(200).json(form);
         } catch (error) {
             res.status(500).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
         }
