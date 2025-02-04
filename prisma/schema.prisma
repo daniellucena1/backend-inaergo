@@ -38,17 +38,30 @@ model Form {
   title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+}
 
-  questions Question[]
+model Page {
+  id     Int @id @default(autoincrement())
+  number Int
+  formId Int
+
+  Question Question[]
+}
+
+enum Type {
+  TEXT
+  RATING
+  CHECKBOX
 }
 
 model Question {
   id     Int    @id @default(autoincrement())
   text   String
-  formId Int
+  type   Type
+  pageId Int
 
-  form   Form     @relation(fields: [formId], references: [id])
-  answer Answer[]
+  page   Page     @relation(fields: [pageId], references: [id])
+  Answer Answer[]
 }
 
 model Answer {
