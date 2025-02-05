@@ -1,17 +1,21 @@
 import prisma from "../services/prisma";
-import bcrypt from 'bcryptjs';
 
 export const employeeService = {
-  createEmployee: async (name: string, email: string, password: string) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  createEmployee: async (name: string, email: string, age: number, gender: string, schoolership: string, meritalStatus: string, sector: string, position: string, companyTime: number, positionTime: number, healthProblemLastYear: string, registration: string) => {
     const employee = await prisma.employee.create({
       data: {
         name,
         email,
-        password: hashedPassword,
-      },
-      omit: {
-        password: true
+        age,
+        gender,
+        schoolership,
+        meritalStatus,
+        sector,
+        position,
+        companyTime,
+        positionTime,
+        healthProblemLastYear,
+        registration
       }
     });
 
@@ -24,10 +28,7 @@ export const employeeService = {
 
   getEmployeeById: async (id: number) => {
     const employee = await prisma.employee.findUnique({
-      where: { id: id },
-      omit: {
-        password: true
-      }
+      where: { id: id }
     });
 
     if (!employee) {
@@ -37,18 +38,23 @@ export const employeeService = {
     return employee;
   },
 
-  updateEmployee: async (id: number, name: string, email: string, password: string) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  updateEmployee: async (id: number, name: string, email: string, age: number, gender: string, schoolership: string, meritalStatus: string, sector: string, position: string, companyTime: number, positionTime: number, healthProblemLastYear: string, registration: string) => {
 
     const employee = await prisma.employee.update({
       where: { id: id },
       data: {
         name,
         email,
-        password: hashedPassword,
-      },
-      omit: {
-        password: true
+        age,
+        gender,
+        schoolership,
+        meritalStatus,
+        sector,
+        position,
+        companyTime,
+        positionTime,
+        healthProblemLastYear,
+        registration
       }
     });
 

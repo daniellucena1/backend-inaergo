@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from './prisma';
 import { User } from '../types/user';
+import { Employee } from '@prisma/client';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -19,17 +20,17 @@ export const authService = {
       throw new Error("Admin não encontrado");
     }
 
-    return authService.handleLogin(user, password);
+    return authService.handleLoginManager(user, password);
   },
 
-  loginFuncionario: async (email: string, password: string) => {
-    const user = await prisma.employee.findUnique({ where: { email: email } });
+  loginFuncionario: async (email: string, registration: string) => {
+    const user = await prisma.employee.findUnique({ where: { registration: registration } });
 
     if (!user) {
       throw new Error("Funcionário não encontrado");
     }
 
-    return authService.handleLogin(user, password);
+    return authService.handleLoginEmployee(user, registration);
   },
 
   loginManager: async (email: string, password: string) => {
@@ -39,10 +40,10 @@ export const authService = {
       throw new Error("Admin não encontrado");
     }
 
-    return authService.handleLogin(user, password);
+    return authService.handleLoginManager(user, password);
   },
 
-  handleLogin: async (user: User, password: string) => {
+  handleLoginManager: async (user: User, password: string) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
@@ -61,6 +62,27 @@ export const authService = {
     );
 
     return { token, user: { ...user, password: undefined } };
+  },
+
+  handleLoginEmployee: async (user: Employee, registration: string) => {
+    const validRegistration = await bcrypt.compare(registration, user.registration);
+
+    if (!validRegistration) {
+      throw new Error("registration inválida");
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        registration: user.registration,
+      },
+      JWT_SECRET,
+      {
+        expiresIn: "7d"
+      }
+    );
+
+    return { token, user: { ...user } };
   },
 
   verifyToken: (token: string) => {
