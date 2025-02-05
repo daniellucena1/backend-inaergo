@@ -1,4 +1,4 @@
-import prisma from "../services/prisma";
+import prisma from "./prisma";
 import bcrypt from 'bcryptjs';
 
 export const employeeService = {

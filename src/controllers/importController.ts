@@ -4,7 +4,7 @@ import { Employee } from '@prisma/client';
 import { importService } from '../services/importService';
 
 export const importController = {
-  import: async (req: Request, res: Response) => {
+  importAsCsv: async (req: Request, res: Response) => {
     const path = req.file?.path;
 
     if (!path) {
@@ -12,7 +12,7 @@ export const importController = {
     }
 
     try {
-      const results: Employee[] = await importService.import(path);
+      const results: Employee[] = await importService.importFromCsv(path);
 
       res.status(201).json({ message: 'Arquivo importado com sucesso', results });
     } catch (error) {
@@ -22,4 +22,18 @@ export const importController = {
       });
     }
   },
+
+  importFromExcel: async (req: Request, res: Response) => {
+    try {
+      const path = req.file?.path;
+      const results: Employee[] = await importService.importFromExcel(path as string);
+
+      res.status(201).json({ message: 'Arquivo importado com sucesso', results });
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({
+        error: error instanceof Error ? error.message : 'Erro desconhecido'
+      });
+    }
+  }
 };
