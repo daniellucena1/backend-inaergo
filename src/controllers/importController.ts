@@ -23,17 +23,17 @@ export const importController = {
     }
   },
 
-  importFromExcel: async (req: Request, res: Response) => {
-    try {
-      const path = req.file?.path;
-      const results: Employee[] = await importService.importFromExcel(path as string);
+  // importFromExcel: async (req: Request, res: Response) => {
+  //   try {
+  //     const path = req.file?.path;
+  //     const results: Employee[] = await importService.importFromExcel(path as string);
 
-      res.status(201).json({ message: 'Arquivo importado com sucesso', results });
-    } catch (error) {
-      console.log(error)
-      res.status(500).json({
-        error: error instanceof Error ? error.message : 'Erro desconhecido'
-      });
-    }
-  }
+  //     res.status(201).json({ message: 'Arquivo importado com sucesso', results });
+  //   } catch (error) {
+  //     console.log(error)
+  //     res.status(500).json({
+  //       error: error instanceof Error ? error.message : 'Erro desconhecido'
+  //     });
+  //   }
+  // }
 };

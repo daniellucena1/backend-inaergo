@@ -7,6 +7,6 @@ const route = Router();
 const upload = multer({ dest: '../imports' });
 
 route.post('/import', authMiddleware.authenticate, authMiddleware.isAdmin, upload.single('csv'), importController.importAsCsv);
-route.post('/import-from-excel', upload.single('file'), importController.importFromExcel);
+// route.post('/import-from-excel', upload.single('file'), importController.importFromExcel);
 
 export default route;

@@ -2,9 +2,13 @@ import fs from 'fs';
 import csvParser from 'csv-parser';
 import prisma from '../services/prisma';
 import { Employee } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import xlsx from 'xlsx';
-import { DataExcel } from '../types/dataExcel';
+// import bcrypt from 'bcryptjs';
+// import xlsx from 'xlsx';
+// import { DataExcel } from '../types/dataExcel';
+
+// Se tornar uma rota só / importar tanto csv quando excel
+// mecanismo de resposta (id da questão / resposta de um usuário)
+// Resposta irá se tornar number ( schema.prisma )
 
 export const importService = {
   importFromCsv: async (path: string) => {
@@ -49,30 +53,30 @@ export const importService = {
     return results;
   },
 
-  importFromExcel: async (path: string) => {
-    const excel = xlsx.readFile(path);
-    const data: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>[] = [];
-    const sheets = excel.SheetNames;
+  // importFromExcel: async (path: string) => {
+  //   const excel = xlsx.readFile(path);
+  //   const data: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>[] = [];
+  //   const sheets = excel.SheetNames;
 
-    for (let i = 0; i < sheets.length; i++) {
-      const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]])
-      temp.forEach((res) => {
-        const row: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'> = {
-          name: res['nome'],
-          email: res['email'],
-          password: bcrypt.hashSync(String(res['password']), 10),
-          permission: false,
-        }
+  //   for (let i = 0; i < sheets.length; i++) {
+  //     const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]])
+  //     temp.forEach((res) => {
+  //       const row: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'> = {
+  //         name: res['nome'],
+  //         email: res['email'],
+  //         password: bcrypt.hashSync(String(res['password']), 10),
+  //         permission: false,
+  //       }
 
-        data.push(row)
-      })
-    }
+  //       data.push(row)
+  //     })
+  //   }
 
-    const results = await prisma.employee.createManyAndReturn({
-      data,
-      skipDuplicates: true,
-    });
+  //   const results = await prisma.employee.createManyAndReturn({
+  //     data,
+  //     skipDuplicates: true,
+  //   });
 
-    return results;
-  }
+  //   return results;
+  // }
 }
