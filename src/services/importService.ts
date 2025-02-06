@@ -18,12 +18,18 @@ export const importService = {
       fs.createReadStream(path)
         .pipe(csvParser())
         .on('data', (data: Employee) => {
-          if (!data.password) {
-            throw new Error('Senha não encontrada no CSV');
+          if (!data.registration) {
+            throw new Error('Matrícula não encontrada no CSV');
           }
 
-          data.password = bcrypt.hashSync(data.password, 10);
-          results.push(data);
+          const newData: Employee = {
+            ...data,
+            age: parseInt(data.age as unknown as string, 10),
+            companyTime: parseInt(data.companyTime as unknown as string, 10),
+            positionTime: parseInt(data.positionTime as unknown as string, 10),
+          }
+
+          results.push(newData);
         })
         .on('end', async () => {
           try {
