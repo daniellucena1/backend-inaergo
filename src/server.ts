@@ -4,6 +4,7 @@ import adminRoutes from './routes/adminRoute'
 import employeeRoutes from './routes/employeeRoute';
 import managerRoutes from './routes/managerRoute';
 import importRoutes from './routes/importRoute';
+import formsRoutes from './routes/formsRoute';
 import cors from 'cors';
 
 const app = express();
@@ -11,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors())
 app.use(express.json());
-app.use(authRoutes, adminRoutes, employeeRoutes, managerRoutes, importRoutes);
+app.use(authRoutes, adminRoutes, employeeRoutes, managerRoutes, importRoutes, formsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
