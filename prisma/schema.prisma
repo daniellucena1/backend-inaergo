@@ -92,4 +92,15 @@ model Manager {
   permission Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
+  Company    Company? @relation(fields: [companyId], references: [id])
+  companyId  Int?
+}
+
+model Company {
+  id        Int       @id @default(autoincrement())
+  name      String
+  cnpj      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  Manager   Manager[]
 }

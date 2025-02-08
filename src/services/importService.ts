@@ -8,7 +8,6 @@ import { Employee } from '@prisma/client';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
-// Resposta irá se tornar number ( schema.prisma )
 
 export const importService = {
   importFromCsv: async (path: string) => {
