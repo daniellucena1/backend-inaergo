@@ -4,53 +4,18 @@ import prisma from "./prisma";
 export const answerService = {
   createAnswerFromJson: async (answer: AnswerDTO) => {
 
-    // const createdForm = await prisma.form.create({
-    //     data: {
-    //         title: forms.title,
-    //     }
-    // })
-
-    // const createdPages = await Promise.all(forms.pages.map((form) => {
-    //     return prisma.page.create({
-    //         data: {
-    //             formId: createdForm.id,
-    //             number: form.page,
-    //             Question: {
-    //                 create: form.fields.map((field) => ({
-    //                     text: field.question,
-    //                     type: field.type,
-    //                 }))
-    //             }
-    //         },
-    //         select: {
-    //             Question: true,
-    //             number: true
-    //         }
-    //     })
-    // }));
-
-    // return {
-    //     forms: {
-    //         title: createdForm.title,
-    //         pages: createdPages.map((page) => ({
-    //             page: page.number,
-    //             fields: page.Question.map((question) => ({
-    //                 question: question.text,
-    //                 type: question.type,
-    //             }))
-    //         }))
-    //     }
-    // } as FormsDTO;
-
-    const createdAnswer = await Promise.all(answer.map((answer) => {
+    const createdAnswer = await Promise.all(answer.answers.map((ans) => {
+      console.log(ans)
       return prisma.answer.create({
         data: {
-          employeeId: answer.employeeId,
-          questionId: answer.questionId,
-          value: answer.answer
+          employeeId: ans.employeeId,
+          questionId: ans.questionId,
+          value: ans.answer
         }
       })
-    }));
+    }))
+
+    console.log(createdAnswer)
 
     if (!createdAnswer) {
       throw new Error('Erro ao criar resposta');
@@ -60,30 +25,7 @@ export const answerService = {
 
   },
 
-  // getForm: async () => {
-  //     const form = await prisma.form.findFirst({});
-
-  //     if (!form) {
-  //         throw new Error('Formulário não encontrado');
-  //     }
-
-  //     const pages = await prisma.page.findMany({ where: { formId: form?.id }, select: { number: true, Question: true } });
-
-  //     return {
-  //         answer: {
-  //             title: form.title,
-  //             pages: pages.map((page) => ({
-  //                 page: page.number,
-  //                 fields: page.Question.map((question) => ({
-  //                     question: question.text,
-  //                     type: question.type,
-  //                 }))
-  //             }))
-  //         }
-  //     } as AnswerDTO;
-  // }
-
-  getAnswer: async () => {
+  getAnswers: async () => {
     const answer = await prisma.answer.findMany({});
 
     if (!answer) {
@@ -98,4 +40,24 @@ export const answerService = {
       }))
     }
   },
+
+  getAnswersByEmployeeId: async (employeeRegistration: string) => {
+    const answer = await prisma.answer.findMany({
+      where: {
+        employeeId: parseInt(employeeRegistration)
+      }
+    });
+
+    if (!answer) {
+      throw new Error('Resposta não encontrada');
+    }
+
+    return {
+      answer: answer.map((answer) => ({
+        employeeId: answer.employeeId,
+        questionId: answer.questionId,
+        answer: answer.value
+      }))
+    }
+  }
 }
