@@ -5,7 +5,7 @@ export const answerService = {
   createAnswerFromJson: async (answer: AnswerDTO) => {
 
     const createdAnswer = await Promise.all(answer.answers.map((ans) => {
-      console.log(ans)
+
       return prisma.answer.create({
         data: {
           employeeId: ans.employeeId,
@@ -14,8 +14,6 @@ export const answerService = {
         }
       })
     }))
-
-    console.log(createdAnswer)
 
     if (!createdAnswer) {
       throw new Error('Erro ao criar resposta');

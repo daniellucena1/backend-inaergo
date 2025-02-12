@@ -4,32 +4,41 @@ import prisma from '../services/prisma';
 import { Employee } from '@prisma/client';
 // import bcrypt from 'bcryptjs';
 // import xlsx from 'xlsx';
-// import { DataExcel } from '../types/dataExcel';
+import { DataExcel } from '../types/dataExcel';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
 
 export const importService = {
-  importFromCsv: async (path: string) => {
+  importFromCsv: async (path: string, companyId: number) => {
     if (!path) {
       throw new Error('Nenhum arquivo enviado');
     }
 
-    const results: Employee[] = [];
+    const results: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission">[] = [];
 
     await new Promise((resolve, reject) => {
       fs.createReadStream(path)
         .pipe(csvParser())
-        .on('data', (data: Employee) => {
-          if (!data.registration) {
+        .on('data', (data: DataExcel) => {
+          if (!data.matricula) {
             throw new Error('Matrícula não encontrada no CSV');
           }
 
-          const newData: Employee = {
-            ...data,
-            age: parseInt(data.age as unknown as string, 10),
-            companyTime: parseInt(data.companyTime as unknown as string, 10),
-            positionTime: parseInt(data.positionTime as unknown as string, 10),
+          const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
+            registration: data.matricula,
+            email: data.email,
+            name: data.nome,
+            age: parseInt(data.idade as unknown as string, 10),
+            companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
+            positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
+            meritalStatus: data['estado civil'],
+            healthProblemLastYear: data['problemas de saude'],
+            gender: data.genero,
+            position: data.cargo,
+            sector: data.setor,
+            scholarship: data.escolaridade,
+            companyId
           }
 
           results.push(newData);
