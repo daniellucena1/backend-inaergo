@@ -4,7 +4,20 @@ import prisma from "./prisma";
 export const answerService = {
   createAnswerFromJson: async (answer: AnswerDTO) => {
 
-    const createdAnswer = await Promise.all(answer.answers.map((ans) => {
+    const createdAnswer = await Promise.all(answer.answers.map(async (ans) => {
+
+      const empCheck = async () => {
+        return await prisma.answer.findFirst({
+          where: {
+            employeeId: ans.employeeId,
+            questionId: ans.questionId
+          }
+        })
+      }
+  
+      if (await empCheck()) {
+        throw new Error('Funcionário não pode responder mais de uma vez');
+      }
 
       return prisma.answer.create({
         data: {
