@@ -1,4 +1,5 @@
 import { FormsDTO } from "../types/formsDTO"
+import { FormsResponse } from "../types/formsResponse";
 import prisma from "./prisma";
 
 export const formsService = {
@@ -22,6 +23,7 @@ export const formsService = {
                     }
                 },
                 select: {
+                    id: true,
                     Question: true,
                     number: true
                 }
@@ -30,16 +32,19 @@ export const formsService = {
 
         return {
             forms: {
+                id: createdForm.id,
                 title: createdForm.title,
                 pages: createdPages.map((page) => ({
+                    id: page.id,
                     page: page.number,
                     fields: page.Question.map((question) => ({
+                        id: question.id,
                         question: question.text,
                         type: question.type,
                     }))
                 }))
             }
-        } as FormsDTO;
+        } as FormsResponse;
     },
 
     getForm: async () => {
@@ -49,19 +54,29 @@ export const formsService = {
             throw new Error('Formulário não encontrado');
         }
 
-        const pages = await prisma.page.findMany({ where: { formId: form?.id }, select: { number: true, Question: true } });
+        const pages = await prisma.page.findMany({
+            where: { formId: form?.id },
+            select: {
+                id: true,
+                number: true,
+                Question: true
+            }
+        });
 
         return {
             forms: {
+                id: form.id,
                 title: form.title,
                 pages: pages.map((page) => ({
+                    id: page.id,
                     page: page.number,
                     fields: page.Question.map((question) => ({
+                        id: question.id,
                         question: question.text,
                         type: question.type,
                     }))
                 }))
             }
-        } as FormsDTO;
+        } as FormsResponse;
     }
 }

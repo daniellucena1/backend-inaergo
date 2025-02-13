@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { formsService } from "../services/formsService";
 import { z } from "zod";
-import { FormsDTO } from "../types/formsDTO";
+import { FormsResponse } from "../types/formsResponse";
 
 export const formsController = {
     createForm: async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ export const formsController = {
 
             const data = schema.parse(req.body);
 
-            const form: FormsDTO = await formsService.createFormFromJson(data);
+            const form: FormsResponse = await formsService.createFormFromJson(data);
             res.status(201).json(form);
         } catch (error) {
             res.status(500).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
@@ -30,7 +30,7 @@ export const formsController = {
 
     getForm: async (req: Request, res: Response) => {
         try {
-            const form: FormsDTO = await formsService.getForm();
+            const form: FormsResponse = await formsService.getForm();
             res.status(200).json(form);
         } catch (error) {
             res.status(500).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
