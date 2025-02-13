@@ -15,6 +15,8 @@ export const importService = {
       throw new Error('Nenhum arquivo enviado');
     }
 
+    let employees: Employee[] = [];
+
     const results: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission">[] = [];
 
     await new Promise((resolve, reject) => {
@@ -45,7 +47,7 @@ export const importService = {
         })
         .on('end', async () => {
           try {
-            await prisma.employee.createMany({
+            employees = await prisma.employee.createManyAndReturn({
               data: results,
               skipDuplicates: true,
             });
@@ -58,7 +60,8 @@ export const importService = {
           reject(error);
         });
     });
-    return results;
+
+    return employees;
   },
 
   // importFromExcel: async (path: string) => {

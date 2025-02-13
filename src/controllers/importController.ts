@@ -6,13 +6,14 @@ import { importService } from '../services/importService';
 export const importController = {
   importAsCsv: async (req: Request, res: Response) => {
     const path = req.file?.path;
+    const { companyId } = req.params;
 
     if (!path) {
       return res.status(400).json({ error: 'Nenhum arquivo enviado' });
     }
 
     try {
-      const results: Employee[] = await importService.importFromCsv(path);
+      const results: Employee[] = await importService.importFromCsv(path, Number(companyId));
 
       res.status(201).json({ message: 'Arquivo importado com sucesso', results });
     } catch (error) {
