@@ -54,8 +54,9 @@ model Form {
 }
 
 model Page {
-  id     Int @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   number Int
+  title  String
   formId Int
 
   Question Question[]
