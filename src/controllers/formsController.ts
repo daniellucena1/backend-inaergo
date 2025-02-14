@@ -11,6 +11,7 @@ export const formsController = {
                     title: z.string(),
                     pages: z.array(z.object({
                         page: z.number(),
+                        title: z.string(),
                         fields: z.array(z.object({
                             type: z.enum(["TEXT", "RATING", "CHECKBOX"]),
                             question: z.string()

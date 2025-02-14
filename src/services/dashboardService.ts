@@ -1,4 +1,3 @@
-
 import prisma from "./prisma"
 
 // 5 funcionarios 2 - 5 risco alto
@@ -45,6 +44,8 @@ export const dashboardService = {
       let totalPagina = 0;
       
       return {
+        title: p.title,
+        number: p.number,
         questions: p.Question.map((q) => {
           let alto = 0;
           let medio = 0;
@@ -72,6 +73,7 @@ export const dashboardService = {
           totalPagina += total
 
           return {
+            questionId: q.id,
             question: q.text,
             type: q.type,
             data: {

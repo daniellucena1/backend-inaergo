@@ -3,6 +3,7 @@ export type FormsDTO = {
         title: string;
         pages: {
             page: number;
+            title: string;
             fields: {
                 type: "TEXT" | "RATING" | "CHECKBOX";
                 question: string;

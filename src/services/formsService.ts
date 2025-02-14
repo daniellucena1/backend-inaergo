@@ -15,6 +15,7 @@ export const formsService = {
                 data: {
                     formId: createdForm.id,
                     number: form.page,
+                    title: form.title,
                     Question: {
                         create: form.fields.map((field) => ({
                             text: field.question,
@@ -25,6 +26,7 @@ export const formsService = {
                 select: {
                     id: true,
                     Question: true,
+                    title: true,
                     number: true
                 }
             })
@@ -37,6 +39,7 @@ export const formsService = {
                 pages: createdPages.map((page) => ({
                     id: page.id,
                     page: page.number,
+                    title: page.title,
                     fields: page.Question.map((question) => ({
                         id: question.id,
                         question: question.text,
@@ -59,6 +62,7 @@ export const formsService = {
             select: {
                 id: true,
                 number: true,
+                title: true,
                 Question: true
             }
         });
@@ -70,6 +74,7 @@ export const formsService = {
                 pages: pages.map((page) => ({
                     id: page.id,
                     page: page.number,
+                    title: page.title,
                     fields: page.Question.map((question) => ({
                         id: question.id,
                         question: question.text,

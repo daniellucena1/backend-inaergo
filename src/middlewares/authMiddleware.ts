@@ -39,5 +39,23 @@ export const authMiddleware = {
       res.status(403).json({ error: "Acesso negado. Requer admin" });
     };
     next();
+  },
+
+  isManager: async (req: Request, res: Response, next: NextFunction) => {
+    const manager = await prisma.manager.findUnique({
+      where: {
+        email: req.user?.email
+      }
+    });
+
+    if( !manager ) {
+      return res.status(404).json({ error: "Manager não encontrado" });
+    }
+
+    if (manager.permission !== true) {
+      res.status(403).json({ error: "Acesso negado. Requer manager" });
+    }
+
+    next();
   }
 }

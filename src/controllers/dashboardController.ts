@@ -4,7 +4,11 @@ import { dashboardService } from '../services/dashboardService'
 export const dashboardController = {
   getDashboardInfo: async (req: Request, res: Response) => {
     try {
-      const { managerId } = req.params
+      const managerId: number | undefined = req.user?.id;
+
+      if (managerId === undefined) {
+        throw new Error("Manager não encontrado")
+      }
 
       const dashboardInfo = await dashboardService.getDashboardInfo(Number(managerId));
 
