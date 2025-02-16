@@ -51,6 +51,20 @@ export const employeeController = {
   //   }
   // },
 
+  getAllEmloyees: async (req: Request, res: Response) => {
+    try {
+      const employees = await employeeService.getAllEmployees();
+
+      res.json(employees);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({
+          error: error.message,
+        });
+      }
+    }
+  },
+
   async deleteEmployee(req: Request, res: Response) {
     try {
       const { id } = req.params;

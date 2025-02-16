@@ -55,6 +55,16 @@ export const employeeService = {
   //   return employee;
   // },
 
+  getAllEmployees: async () => {
+    const employees = await prisma.employee.findMany();
+
+    if (!employees) {
+      throw new Error('Nenhum usuário encontrado');
+    }
+
+    return employees;
+  },
+
   deleteEmployee: async (id: number) => {
     await prisma.employee.delete({ where: { id: id } });
 
