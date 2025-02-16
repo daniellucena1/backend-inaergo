@@ -3,9 +3,17 @@ import prisma from "./prisma";
 
 export const answerService = {
   createAnswerFromJson: async (answer: AnswerDTO) => {
-
+    
     const createdAnswer = await Promise.all(answer.answers.map(async (ans) => {
 
+      const employeeExists = await prisma.employee.findUnique({
+        where: { id: ans.employeeId}
+      });
+
+      if (!employeeExists) {
+        throw new Error('Funcionário não encontrado');
+      }
+      
       const empCheck = async () => {
         return await prisma.answer.findFirst({
           where: {
