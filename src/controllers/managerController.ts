@@ -8,14 +8,15 @@ export const managerController = {
       const schema = z.object({
         name: z.string(),
         email: z.string(),
-        password: z.string()
+        password: z.string(),
+        companyId: z.number()
       })
 
-      const { name, email, password } = schema.parse(req.body);
+      const { name, email, password, companyId } = schema.parse(req.body);
 
-      const m = managerService.createManager(name, email, password);
-
-      res.json(m);
+      const manager = await managerService.createManager(name, email, password, companyId);
+      
+      res.status(200).json(manager);
     } catch (error) {
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: error.errors });

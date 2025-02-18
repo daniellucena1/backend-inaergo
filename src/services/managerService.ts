@@ -2,18 +2,35 @@ import prisma from "../services/prisma";
 import bcrypt from "bcryptjs";
 
 export const managerService = {
-  createManager: async (name: string, email: string, password: string) => {
+  createManager: async (name: string, email: string, password: string, companyId: number) => {
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const managerExists = await prisma.manager.findFirst({
+      where: {
+        email: email
+      }
+    });
+
+    if (managerExists) {
+      throw new Error('Usuário já cadastrado');
+    }
+
     const manager = await prisma.manager.create({
       data: {
         name,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        companyId: companyId
       },
       omit: {
         password: true
       }
     });
+
+    if (!manager) {
+      throw new Error('Erro ao criar usuário');
+    }
+
     return manager;
   },
 

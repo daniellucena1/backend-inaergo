@@ -98,8 +98,8 @@ model Manager {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId Int
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
 
 model Company {

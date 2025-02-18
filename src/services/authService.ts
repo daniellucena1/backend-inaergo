@@ -37,7 +37,7 @@ export const authService = {
     const user = await prisma.manager.findUnique({ where: { email: email } });
 
     if (!user) {
-      throw new Error("Admin não encontrado");
+      throw new Error("Gestor não encontrado");
     }
 
     return authService.handleLoginManager(user, password);
