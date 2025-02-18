@@ -55,7 +55,7 @@ export const dashboardService = {
             console.log(answers)
 
             answers.map((a) => {
-              if (a.value >= 1.29 && a.value <= 2.29) {
+              if (a.value >= 1 && a.value <= 2.29) {
                 alto += 1;
               } else if (a.value >= 2.3 && a.value <= 3.69) {
                 medio += 1;

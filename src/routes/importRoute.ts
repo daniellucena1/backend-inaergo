@@ -6,7 +6,7 @@ import { importController } from '../controllers/importController';
 const route = Router();
 const upload = multer({ dest: '../imports' });
 
-route.post('/import', authMiddleware.authenticate, authMiddleware.isManager, upload.single('csv'), importController.importAsCsv);
+route.post('/import/:companyId', authMiddleware.authenticate, authMiddleware.isManager, upload.single('csv'), importController.importAsCsv);
 // route.post('/import-from-excel', upload.single('file'), importController.importFromExcel);
 
 export default route;

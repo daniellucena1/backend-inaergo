@@ -65,7 +65,7 @@ export const authService = {
   },
 
   handleLoginEmployee: async (user: Employee, registration: string) => {
-    const validRegistration = await bcrypt.compare(registration, user.registration);
+    const validRegistration = user.registration.trim() === registration.trim();
 
     if (!validRegistration) {
       throw new Error("registration inválida");

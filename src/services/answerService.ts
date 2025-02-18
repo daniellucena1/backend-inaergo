@@ -36,9 +36,7 @@ export const answerService = {
       })
     }))
 
-    if (!createdAnswer) {
-      throw new Error('Erro ao criar resposta');
-    }
+    console.log(createdAnswer);
 
     return createdAnswer;
 
