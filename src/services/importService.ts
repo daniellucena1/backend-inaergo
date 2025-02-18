@@ -10,10 +10,20 @@ import { DataExcel } from '../types/dataExcel';
 // mecanismo de resposta (id da questão / resposta de um usuário)
 
 export const importService = {
-  importFromCsv: async (path: string, companyId: number) => {
+  importFromCsv: async (path: string, managerId: number) => {
     if (!path) {
       throw new Error('Nenhum arquivo enviado');
     }
+
+    const manager = await prisma.manager.findUnique({
+      where: { id: managerId }
+    })
+
+    if (!manager) {
+      throw new Error('Gerente não encontrado');
+    }
+
+    const companyId = manager?.companyId;
 
     let employees: Employee[] = [];
 
