@@ -19,8 +19,8 @@ export const authController = {
 
   loginFuncionario: async (req: Request, res: Response) => {
     try {
-      const { email, registration } = req.body;
-      const { token, user } = await authService.loginFuncionario(email, registration);
+      const { registration } = req.body;
+      const { token, user } = await authService.loginFuncionario(registration);
       res.json({ token, user });
     } catch (error) {
       return authController.handleLoginError(error as Error, res);

@@ -23,7 +23,7 @@ export const authService = {
     return authService.handleLoginManager(user, password);
   },
 
-  loginFuncionario: async (email: string, registration: string) => {
+  loginFuncionario: async (registration: string) => {
     const user = await prisma.employee.findUnique({ where: { registration: registration } });
 
     if (!user) {
