@@ -2,22 +2,22 @@ import { AnswerDTO } from "../types/answerDTO";
 import prisma from "./prisma";
 
 export const answerService = {
-  createAnswerFromJson: async (answer: AnswerDTO) => {
+  createAnswerFromJson: async (answer: AnswerDTO, employeeId: number) => {
     
+    const employeeExists = await prisma.employee.findUnique({
+      where: { id: employeeId}
+    });
+
+    if (!employeeExists) {
+      throw new Error('Funcionário não encontrado');
+    }
+
     const createdAnswer = await Promise.all(answer.answers.map(async (ans) => {
 
-      const employeeExists = await prisma.employee.findUnique({
-        where: { id: ans.employeeId}
-      });
-
-      if (!employeeExists) {
-        throw new Error('Funcionário não encontrado');
-      }
-      
       const empCheck = async () => {
         return await prisma.answer.findFirst({
           where: {
-            employeeId: ans.employeeId,
+            employeeId: employeeId,
             questionId: ans.questionId
           }
         })
@@ -29,7 +29,7 @@ export const answerService = {
 
       return prisma.answer.create({
         data: {
-          employeeId: ans.employeeId,
+          employeeId: employeeId,
           questionId: ans.questionId,
           value: ans.answer
         }

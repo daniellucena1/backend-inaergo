@@ -9,7 +9,6 @@ export const answerController = {
     try {
       const schema = z.object({
         answers: z.array(z.object({
-          employeeId: z.number(),
           questionId: z.number(),
           answer: z.number()
         }))
@@ -17,7 +16,11 @@ export const answerController = {
 
       const data = schema.parse(req.body);
 
-      const answer = await answerService.createAnswerFromJson(data as AnswerDTO);
+      if (req.user === undefined) {
+        throw new Error('Usuário não encontrado');
+      }
+
+      const answer = await answerService.createAnswerFromJson(data as AnswerDTO, req.user.id);
 
       res.status(201).json(answer);
     } catch (error) {
