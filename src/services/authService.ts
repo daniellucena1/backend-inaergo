@@ -20,7 +20,7 @@ export const authService = {
       throw new Error("Admin não encontrado");
     }
 
-    return authService.handleLoginManager(user, password);
+    return authService.handleLogin(user, password, true);
   },
 
   loginFuncionario: async (registration: string) => {
@@ -40,10 +40,10 @@ export const authService = {
       throw new Error("Gestor não encontrado");
     }
 
-    return authService.handleLoginManager(user, password);
+    return authService.handleLogin(user, password, false);
   },
 
-  handleLoginManager: async (user: User, password: string) => {
+  handleLogin: async (user: User, password: string, isAdmin: boolean) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
@@ -54,6 +54,7 @@ export const authService = {
       {
         id: user.id,
         email: user.email,
+        isAdmin: isAdmin,
       },
       JWT_SECRET,
       {
@@ -75,6 +76,7 @@ export const authService = {
       {
         id: user.id,
         registration: user.registration,
+        isAdmin: false
       },
       JWT_SECRET,
       {
