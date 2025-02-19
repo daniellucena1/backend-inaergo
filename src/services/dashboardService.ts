@@ -1,4 +1,3 @@
-import { z } from "zod";
 import prisma from "./prisma"
 
 // 5 funcionarios 2 - 5 risco alto
@@ -16,7 +15,9 @@ import prisma from "./prisma"
 // 3.7 - 5 Risco Baixo
 
 export const dashboardService = {
-  getDashboardInfo: async (managerId: number, sector: string, age: number, gender: string, companyTime: string) => {
+  getDashboardInfo: async (managerId: number, sector?: string, age?: number, gender?: string, companyTime?: number) => {
+
+    console.log(age, companyTime, sector, gender)
 
     const manager = await prisma.manager.findUnique({
       where: {
@@ -26,7 +27,11 @@ export const dashboardService = {
 
     const employees = await prisma.employee.findMany({
       where: {
-        companyId: manager?.companyId
+        companyId: manager?.companyId,
+        sector: sector !== "" ? sector : undefined,
+        age: age ? age : undefined,
+        gender: gender !== "" ? gender : undefined,
+        companyTime: companyTime ? companyTime : undefined,
       },
       include: {
         Answer: true
@@ -44,7 +49,7 @@ export const dashboardService = {
       let medioPagina = 0;
       let baixoPagina = 0;
       let totalPagina = 0;
-      
+
       return {
         title: p.title,
         number: p.number,
@@ -100,11 +105,11 @@ export const dashboardService = {
             label: "Risco Alto"
           },
           1: {
-            value: Number(((medioPagina/ totalPagina) * 100).toFixed(2)),
+            value: Number(((medioPagina / totalPagina) * 100).toFixed(2)),
             label: "Risco Médio"
           },
           2: {
-            value: Number(((baixoPagina/ totalPagina) * 100).toFixed(2)),
+            value: Number(((baixoPagina / totalPagina) * 100).toFixed(2)),
             label: "Risco Baixo"
           },
         }

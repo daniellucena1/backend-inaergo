@@ -8,10 +8,10 @@ export const dashboardController = {
       const managerId: number | undefined = req.user?.id;
 
       const schema = z.object({
-        sector: z.string(),
-        age: z.coerce.number(),
-        gender: z.string(),
-        companyTime: z.string(),
+        sector: z.string().optional(),
+        age: z.coerce.number().optional(),
+        gender: z.string().optional(),
+        companyTime: z.coerce.number().optional(),
       });
 
       const { sector, age, gender, companyTime } = schema.parse(req.query);
@@ -24,7 +24,9 @@ export const dashboardController = {
 
       res.json(dashboardInfo)
     } catch (error) {
-      if (error instanceof Error) {
+      if ( error instanceof z.ZodError) {
+        res.status(400).json({error: error.errors})
+      } else if (error instanceof Error) {
         res.status(400).json({
           message: error.message
         })
