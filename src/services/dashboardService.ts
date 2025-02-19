@@ -1,3 +1,4 @@
+import { z } from "zod";
 import prisma from "./prisma"
 
 // 5 funcionarios 2 - 5 risco alto
@@ -15,7 +16,8 @@ import prisma from "./prisma"
 // 3.7 - 5 Risco Baixo
 
 export const dashboardService = {
-  getDashboardInfo: async (managerId: number) => {
+  getDashboardInfo: async (managerId: number, sector: string, age: number, gender: string, companyTime: string) => {
+
     const manager = await prisma.manager.findUnique({
       where: {
         id: managerId
