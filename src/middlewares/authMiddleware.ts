@@ -32,19 +32,19 @@ export const authMiddleware = {
   isAdmin: async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      
+
       const admin = await prisma.admin.findUnique({ where: { email: req.user?.email } });
       if (!admin) {
-        return res.status(404).json({ error: "Admin não encontrado" });
+        return res.status(401).json({ error: "Admin não encontrado" });
       }
-  
+
       if (admin.permission !== true) {
-        res.status(403).json({ error: "Acesso negado. Requer admin" });
+        res.status(401).json({ error: "Acesso negado. Requer admin" });
       };
       next();
 
     } catch (error) {
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
+      res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
     }
 
   },
@@ -52,27 +52,26 @@ export const authMiddleware = {
   isManager: async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      
+
       const manager = await prisma.manager.findUnique({
         where: {
           email: req.user?.email
         }
       });
-  
-      if( !manager ) {
-        return res.status(404).json({ error: "Manager não encontrado" });
+
+      if (!manager) {
+        return res.status(401).json({ error: "Manager não encontrado" });
       }
-  
+
       if (manager.permission !== true) {
-        res.status(403).json({ error: "Acesso negado. Requer manager" });
+        res.status(401).json({ error: "Acesso negado. Requer manager" });
       }
 
       next();
 
     } catch (error) {
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
+      res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
     }
-
 
   }
 }
