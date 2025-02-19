@@ -10,9 +10,7 @@ if (!JWT_SECRET) {
   throw new Error("A variável JWT_SECRET não está definida no .env.");
 }
 
-
 export const authService = {
-
   loginAdmin: async (email: string, password: string) => {
     const user = await prisma.admin.findUnique({ where: { email: email } });
 
@@ -24,10 +22,18 @@ export const authService = {
   },
 
   loginFuncionario: async (registration: string) => {
-    const user = await prisma.employee.findUnique({ where: { registration: registration } });
+    const user = await prisma.employee.findUnique({
+      where: { registration: registration }, include: {
+        Answer: true
+      }
+    });
 
     if (!user) {
       throw new Error("Funcionário não encontrado");
+    }
+
+    if (user.Answer.length > 0) {
+      throw new Error("Funcionário já respondeu a pesquisa");
     }
 
     return authService.handleLoginEmployee(user, registration);
