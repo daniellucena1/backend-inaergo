@@ -16,14 +16,15 @@ import prisma from "./prisma"
 
 export const dashboardService = {
   getDashboardInfo: async (managerId: number, sector?: string, age?: number, gender?: string, companyTime?: number) => {
-
-    console.log(age, companyTime, sector, gender)
-
-    const manager = await prisma.manager.findUnique({
+    const manager = await prisma.user.findUnique({
       where: {
         id: managerId
       }
     })
+
+    if (manager?.companyId === null) {
+      throw new Error('Usuário não é um gerente');
+    }
 
     const employees = await prisma.employee.findMany({
       where: {
