@@ -25,5 +25,15 @@ export const companyService = {
 
     return company;
 
+  },
+
+  getAllCompanies: async () => {
+    const companies = await prisma.company.findMany();
+
+    if (!companies) {
+      throw new Error("Nenhuma empresa encontrada");
+    }
+
+    return companies
   }
 }

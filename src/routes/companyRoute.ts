@@ -5,5 +5,6 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 const router = Router();
 
 router.post("/company", authMiddleware.authenticate, authMiddleware.isAdmin, companyController.createCompany);
+router.get("/company", authMiddleware.authenticate, authMiddleware.isAdmin, companyController.getAllCompanies);
 
 export default router;

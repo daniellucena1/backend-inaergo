@@ -16,5 +16,19 @@ export const companyController = {
 
       res.status(500).json({ message: 'Erro ao criar empresa' });
     }
+  },
+
+  getAllCompanies: async (req: Request, res: Response) => {
+    try {
+      const companies = await companyService.getAllCompanies();
+
+      res.json(companies);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+
+      res.status(500).json({ message: 'Erro ao buscar empresas' });
+    }
   }
 }
