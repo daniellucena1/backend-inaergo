@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
+model User {
   id         Int      @id @default(autoincrement())
   name       String
   email      String   @unique
@@ -21,6 +21,15 @@ model Admin {
   permission Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
+  type       UserType
+
+  companyId Int?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+enum UserType {
+  ADMIN
+  MANAGER
 }
 
 model Employee {
@@ -89,19 +98,6 @@ model Answer {
   employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 }
 
-model Manager {
-  id         Int      @id @default(autoincrement())
-  name       String
-  email      String   @unique
-  password   String
-  permission Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
-
-  companyId Int
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-}
-
 model Company {
   id        Int      @id @default(autoincrement())
   name      String
@@ -109,6 +105,6 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  manager  Manager[]
   employee Employee[]
+  User     User[]
 }

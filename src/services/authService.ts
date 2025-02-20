@@ -1,8 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from './prisma';
-import { User } from '../types/user';
-import { Employee } from '@prisma/client';
+import { Employee, User } from '@prisma/client';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -11,14 +10,14 @@ if (!JWT_SECRET) {
 }
 
 export const authService = {
-  loginAdmin: async (email: string, password: string) => {
-    const user = await prisma.admin.findUnique({ where: { email: email } });
+  signIn: async (email: string, password: string) => {
+    const user = await prisma.user.findUnique({ where: { email: email } });
 
     if (!user) {
-      throw new Error("Admin não encontrado");
+      throw new Error("Usuário não encontrado");
     }
 
-    return authService.handleLogin(user, password, true);
+    return authService.handleLogin(user, password);
   },
 
   loginFuncionario: async (registration: string) => {
@@ -39,17 +38,7 @@ export const authService = {
     return authService.handleLoginEmployee(user, registration);
   },
 
-  loginManager: async (email: string, password: string) => {
-    const user = await prisma.manager.findUnique({ where: { email: email } });
-
-    if (!user) {
-      throw new Error("Gestor não encontrado");
-    }
-
-    return authService.handleLogin(user, password, false);
-  },
-
-  handleLogin: async (user: User, password: string, isAdmin: boolean) => {
+  handleLogin: async (user: User, password: string) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
@@ -60,7 +49,7 @@ export const authService = {
       {
         id: user.id,
         email: user.email,
-        isAdmin: isAdmin,
+        isAdmin: user.type === "ADMIN" ? true : false,
       },
       JWT_SECRET,
       {

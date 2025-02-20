@@ -15,12 +15,16 @@ export const importService = {
       throw new Error('Nenhum arquivo enviado');
     }
 
-    const manager = await prisma.manager.findUnique({
+    const manager = await prisma.user.findUnique({
       where: { id: managerId }
     })
 
     if (!manager) {
       throw new Error('Gerente não encontrado');
+    }
+
+    if (manager.companyId === null) {
+      throw new Error('Usuário não é um gerente');
     }
 
     const companyId = manager?.companyId;

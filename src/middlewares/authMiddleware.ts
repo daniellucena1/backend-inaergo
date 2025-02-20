@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { authService } from "../services/authService";
-import { User } from "../types/user";
 import prisma from "../services/prisma";
+import { User } from "@prisma/client";
 
 declare module 'express' {
   export interface Request {
@@ -12,7 +12,7 @@ declare module 'express' {
 export const authMiddleware = {
 
   authenticate: (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
       res.status(401).json({ error: "Token não encontrado" });
@@ -33,7 +33,7 @@ export const authMiddleware = {
 
     try {
 
-      const admin = await prisma.admin.findUnique({ where: { email: req.user?.email } });
+      const admin = await prisma.user.findUnique({ where: { email: req.user?.email, type: "ADMIN" } });
       if (!admin) {
         return res.status(401).json({ error: "Admin não encontrado" });
       }
@@ -53,9 +53,10 @@ export const authMiddleware = {
 
     try {
 
-      const manager = await prisma.manager.findUnique({
+      const manager = await prisma.user.findUnique({
         where: {
-          email: req.user?.email
+          email: req.user?.email,
+          type: "MANAGER"
         }
       });
 

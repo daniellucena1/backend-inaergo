@@ -1,13 +1,14 @@
 import prisma from '../src/services/prisma';
 
 async function main() {
-  const admin = await prisma.admin.upsert({
+  const admin = await prisma.user.upsert({
     where: { email: 'inaergo@exemplo.com' },
     update: {},
     create: {
       name: 'Inaergo',
-      email: 'inaergo@exemoplo.com',
-      password: '$2a$10$39tGEwsfAvlB/LXlhACxzelRvOJPjHDJsUNQbSlYR6/JeEY6b/Y62',
+      email: 'inaergo@exemplo.com',
+      password: '$2a$10$iv4HyXK2.PFGann2XGyJMOGujG7RgNlG7XK9oDrjtUkC.738158wG',
+      type: 'ADMIN'
     }
   });
 

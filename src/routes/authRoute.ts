@@ -4,8 +4,7 @@ import { authController } from '../controllers/authController';
 const router = Router()
 
 // Rotas de Auth
-router.post("/admin/login", authController.loginAdmin);
+router.post("/user/login", authController.signIn);
 router.post("/employee/login", authController.loginFuncionario);
-router.post("/manager/login", authController.loginManager);
 
 export default router;
