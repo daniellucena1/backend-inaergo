@@ -33,27 +33,43 @@ export const employeeService = {
   //   return employee;
   // },
 
-  // updateEmployee: async (id: number, name: string, email: string, password: string) => {
-  //   const hashedPassword = await bcrypt.hash(password, 10);
+  updateEmployee: async (registration: string, name?: string, email?: string, age?: number, gender?: string, scholarship?: string, meritalStatus?: string, sector?: string, position?: string, companyTime?: number, positionTime?: number, healthProblemLastYear?: string, companyId?: number) => {
 
-  //   const employee = await prisma.employee.update({
-  //     where: { id: id },
-  //     data: {
-  //       name,
-  //       email,
-  //       password: hashedPassword,
-  //     },
-  //     omit: {
-  //       password: true
-  //     }
-  //   });
+    const employee = await prisma.employee.findUnique({
+      where: {
+        registration
+      }
+    });
 
-  //   if (!employee) {
-  //     throw new Error('Erro ao atualizar usuário');
-  //   }
+    if (!employee) {
+      throw new Error('Usuário não cadastrado');
+    }
 
-  //   return employee;
-  // },
+    const updatedEmployee = await prisma.employee.update({
+      where: { registration: registration },
+      data: {
+        name: name !== "" ? name : employee.name,
+        email: email !== "" ? email : employee.email,
+        registration: registration !== "" ? registration : employee.registration,
+        age: age ? age : employee.age, 
+        gender: gender !== "" ? gender : employee.gender, 
+        scholarship: scholarship !== "" ? scholarship : employee.scholarship, 
+        meritalStatus: meritalStatus !== "" ? meritalStatus : employee.meritalStatus, 
+        sector: sector !== "" ? sector : employee.sector, 
+        position: position !== "" ? position : employee.position, 
+        companyTime: companyTime ? companyTime : employee.companyTime, 
+        positionTime: positionTime ? positionTime : employee.positionTime, 
+        healthProblemLastYear: name !== "" ? name : employee.name, 
+        companyId: companyId ? companyId : employee.companyId
+      },
+    });
+
+    if (!updatedEmployee) {
+      throw new Error('Erro ao atualizar usuário');
+    }
+
+    return updatedEmployee;
+  },
 
   getAllEmployees: async () => {
     const employees = await prisma.employee.findMany();
