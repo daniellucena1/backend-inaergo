@@ -59,7 +59,7 @@ export const employeeService = {
         position: position !== "" ? position : employee.position, 
         companyTime: companyTime ? companyTime : employee.companyTime, 
         positionTime: positionTime ? positionTime : employee.positionTime, 
-        healthProblemLastYear: name !== "" ? name : employee.name, 
+        healthProblemLastYear: healthProblemLastYear !== "" ? healthProblemLastYear : employee.healthProblemLastYear, 
         companyId: companyId ? companyId : employee.companyId
       },
     });
