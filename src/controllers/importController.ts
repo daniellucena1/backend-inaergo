@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import { Employee } from '@prisma/client';
 import { importService } from '../services/importService';
 
 export const importController = {
-  importAsCsv: async (req: Request, res: Response) => {
+  importAsCsv: async (req: Request, res: Response, next: NextFunction) => {
     const path = req.file?.path;
 
     if (req.user === undefined) {
@@ -23,9 +23,7 @@ export const importController = {
       res.status(201).json({ message: 'Arquivo importado com sucesso', results });
     } catch (error) {
       fs.unlink(path, () => { });
-      return res.status(500).json({
-        error: error instanceof Error ? error.message : 'Erro desconhecido'
-      });
+      next(error);
     }
   },
 

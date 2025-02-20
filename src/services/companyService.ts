@@ -1,3 +1,5 @@
+import { BadRequest } from "../@errors/BadRequest";
+import { InternalServerError } from "../@errors/InternalServerError";
 import prisma from "./prisma"
 
 export const companyService = {
@@ -9,7 +11,7 @@ export const companyService = {
     });
 
     if ( companyExist ) {
-      throw new Error("Empresa já cadastrada");
+      throw new BadRequest("Empresa já cadastrada");
     }
 
     const company = await prisma.company.create({
@@ -20,7 +22,7 @@ export const companyService = {
     });
 
     if (!company) {
-      throw new Error("Erro ao criar empresa");
+      throw new InternalServerError("Erro ao criar empresa");
     }
 
     return company;
