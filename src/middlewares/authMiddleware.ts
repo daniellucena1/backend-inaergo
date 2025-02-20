@@ -22,10 +22,10 @@ export const authMiddleware = {
       const user = authService.verifyToken(token as string);
       req.user = user;
 
-      next();
+      return next();
     } catch (error) {
       console.error(error);
-      res.status(403).json({ error: "Token inválido" });
+      return res.status(403).json({ error: "Token inválido" });
     }
   },
 
@@ -39,20 +39,18 @@ export const authMiddleware = {
       }
 
       if (admin.permission !== true) {
-        res.status(401).json({ error: "Acesso negado. Requer admin" });
+        return res.status(401).json({ error: "Acesso negado. Requer admin" });
       };
-      next();
 
+      return next();
     } catch (error) {
-      res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
+      return res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
     }
 
   },
 
   isManager: async (req: Request, res: Response, next: NextFunction) => {
-
     try {
-
       const manager = await prisma.user.findUnique({
         where: {
           email: req.user?.email,
@@ -65,14 +63,12 @@ export const authMiddleware = {
       }
 
       if (manager.permission !== true) {
-        res.status(401).json({ error: "Acesso negado. Requer manager" });
+        return res.status(401).json({ error: "Acesso negado. Requer manager" });
       }
 
-      next();
-
+      return next();
     } catch (error) {
-      res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
+      return res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
     }
-
   }
 }
