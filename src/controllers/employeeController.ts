@@ -75,7 +75,14 @@ export const employeeController = {
 
   getAllEmloyees: async (req: Request, res: Response) => {
     try {
-      const employees = await employeeService.getAllEmployees();
+
+      const managerId = req.user?.id;
+
+      if (!managerId) {
+        throw new Error("Necessário id do gestor");
+      }
+
+      const employees = await employeeService.getAllEmployees(managerId);
 
       res.json(employees);
     } catch (error) {

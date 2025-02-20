@@ -71,8 +71,27 @@ export const employeeService = {
     return updatedEmployee;
   },
 
-  getAllEmployees: async () => {
-    const employees = await prisma.employee.findMany();
+  getAllEmployees: async (managerId: number) => {
+    
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
+      }
+    });
+
+    if (!manager) {
+      throw new Error("Gestor não cadastrado");
+    }
+
+    if (!manager.companyId) {
+      throw new Error("Autorização de gestor necessária");
+    }
+    
+    const employees = await prisma.employee.findMany({
+      where: {
+        companyId: manager.companyId
+      }
+    });
 
     if (!employees) {
       throw new Error('Nenhum usuário encontrado');
