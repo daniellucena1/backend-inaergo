@@ -20,7 +20,7 @@ export const dashboardService = {
       where: {
         id: managerId
       }
-    })
+    });
 
     if (manager?.companyId === null) {
       throw new Error('Usuário não é um gerente');
@@ -37,13 +37,15 @@ export const dashboardService = {
       include: {
         Answer: true
       }
-    })
+    });
+
+    const uniqueSectors = [...new Set(employees.map(employee => employee.sector))];
 
     const pages = await prisma.page.findMany({
       include: {
         Question: true
       }
-    })
+    });
 
     const response = pages.map((p) => {
       let altoPagina = 0;
@@ -117,6 +119,9 @@ export const dashboardService = {
       }
     })
 
-    return response;
+    return {
+      pages: response,
+      sectors: uniqueSectors
+    };
   }
 }
