@@ -39,7 +39,9 @@ export const dashboardService = {
       }
     });
 
-    const uniqueSectors = [...new Set(employees.map(employee => employee.sector))];
+    const allEmployes = await prisma.employee.findMany();
+
+    const uniqueSectors = [...new Set(allEmployes.map(employee => employee.sector))];
 
     const pages = await prisma.page.findMany({
       include: {
@@ -62,7 +64,6 @@ export const dashboardService = {
           let baixo = 0;
           employees.map((e) => {
             const answers = e.Answer.filter(a => a.questionId === q.id)
-            console.log(answers)
 
             answers.map((a) => {
               if (a.value >= 1 && a.value <= 2.29) {
