@@ -27,11 +27,14 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           port: 22
           script: |
+            export PATH="$HOME/.nvm/versions/node/v20.16.0/bin:$HOME/.npm-global/bin:$PATH"
+            node -v
+            npm -v
+            pm2 -v
             cd ~/Documents/backend-inaergo-dev
             git checkout main
             git pull origin main
             git status
             npm ci
             npm run build
-            npm install -g pm2
             pm2 restart backend-inaergo-dev
