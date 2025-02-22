@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  permission Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  type       UserType
+
+  companyId Int?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+enum UserType {
+  ADMIN
+  MANAGER
+}
+
+model Employee {
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  email                 String   @unique
+  age                   Int
+  gender                String
+  scholarship           String
+  meritalStatus         String
+  sector                String
+  position              String
+  companyTime           Int
+  positionTime          Int
+  healthProblemLastYear String
+  registration          String   @unique
+  permission            Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @default(now())
+  companyId             Int
+  Company               Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Answer                Answer[]
+}
+
+model Form {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Page {
+  id     Int    @id @default(autoincrement())
+  number Int
+  title  String
+  formId Int
+
+  Question Question[]
+}
+
+enum Type {
+  TEXT
+  RATING
+  CHECKBOX
+}
+
+model Question {
+  id     Int    @id @default(autoincrement())
+  text   String
+  type   Type
+  pageId Int
+
+  page   Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  Answer Answer[]
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  questionId Int
+  value      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  cnpj      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  employee Employee[]
+  User     User[]
+}
