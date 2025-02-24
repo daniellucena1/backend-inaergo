@@ -3,14 +3,14 @@ import csvParser from 'csv-parser';
 import prisma from '../services/prisma';
 import { Employee } from '@prisma/client';
 // import bcrypt from 'bcryptjs';
-// import xlsx from 'xlsx';
+import xlsx from 'xlsx';
 import { DataExcel } from '../types/dataExcel';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
 
 export const importService = {
-  importFromCsv: async (path: string, managerId: number) => {
+  importFile: async(path: string, managerId: number, fileType: string) => {
     if (!path) {
       throw new Error('Nenhum arquivo enviado');
     }
@@ -28,6 +28,20 @@ export const importService = {
     }
 
     const companyId = manager?.companyId;
+
+    switch (fileType) {
+      case 'csv':
+        return await importService.importFromCsv(path, companyId);
+      case 'xlsx':
+      case 'xls':
+        return await importService.importFromExcel(path, companyId);
+      default:
+        throw new Error("Tipo de arquivo não suportado");
+
+    }
+  },
+
+  importFromCsv: async (path: string, companyId: number) => {
 
     let employees: Employee[] = [];
 
@@ -78,30 +92,47 @@ export const importService = {
     return employees;
   },
 
-  // importFromExcel: async (path: string) => {
-  //   const excel = xlsx.readFile(path);
-  //   const data: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>[] = [];
-  //   const sheets = excel.SheetNames;
+  importFromExcel: async (path: string, companyId: number) => {
+    
+    let employees: Employee[] = [];
 
-  //   for (let i = 0; i < sheets.length; i++) {
-  //     const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]])
-  //     temp.forEach((res) => {
-  //       const row: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'> = {
-  //         name: res['nome'],
-  //         email: res['email'],
-  //         password: bcrypt.hashSync(String(res['password']), 10),
-  //         permission: false,
-  //       }
+    const results: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission">[] = [];
 
-  //       data.push(row)
-  //     })
-  //   }
+    const excel = xlsx.readFile(path);
+    const sheets = excel.SheetNames;
 
-  //   const results = await prisma.employee.createManyAndReturn({
-  //     data,
-  //     skipDuplicates: true,
-  //   });
+    for (let i = 0; i < sheets.length; i++) {
+      const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]]);
+      temp.forEach((data) => {
+        if (!data.matricula) {
+          throw new Error('Matrícula não encontrada no Excel');
+        }
 
-  //   return results;
-  // }
+        const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
+          registration: data.matricula,
+          email: data.email,
+          name: data.nome,
+          age: parseInt(data.idade as unknown as string, 10),
+          companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
+          positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
+          meritalStatus: data['estado civil'],
+          healthProblemLastYear: String(data['problemas de saude']),
+          gender: data.genero,
+          position: data.cargo,
+          sector: data.setor,
+          scholarship: data.escolaridade,
+          companyId
+        };
+
+        results.push(newData);
+      });
+    }
+
+    employees = await prisma.employee.createManyAndReturn({
+      data: results,
+      skipDuplicates: true,
+    });
+
+    return employees;
+  },
 }
