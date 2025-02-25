@@ -109,7 +109,7 @@ export const importService = {
         }
 
         const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
-          registration: data.matricula,
+          registration: String(data.matricula),
           email: data.email,
           name: data.nome,
           age: parseInt(data.idade as unknown as string, 10),
