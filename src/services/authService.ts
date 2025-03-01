@@ -32,7 +32,7 @@ export const authService = {
     }
 
     if (user.Answer.length > 0) {
-      throw new Error("Funcionário já respondeu a pesquisa");
+      throw new Error("UNAUTHORIZED");
     }
 
     return authService.handleLoginEmployee(user, registration);

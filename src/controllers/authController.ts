@@ -40,7 +40,9 @@ export const authController = {
       const { token, user } = await authService.loginFuncionario(registration);
       res.json({ token, user });
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof Error && error.message === "UNAUTHORIZED") {
+        return res.status(401).json({error: "Funcionário já respondeu a pesquisa"})
+      }else if (error instanceof Error) {
         return res.status(400).json({ error: error.message });
       }
 
