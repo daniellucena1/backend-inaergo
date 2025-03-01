@@ -15,7 +15,7 @@ import prisma from "./prisma"
 // 3.7 - 5 Risco Baixo
 
 export const dashboardService = {
-  getDashboardInfo: async (managerId: number, sector?: string, age?: number, gender?: string, companyTime?: number) => {
+  getDashboardInfo: async (managerId: number, sector?: string, baseAge?: number, ceilAge?: number, gender?: string, baseCompanyTime?: number, ceilCompanyTime?: number) => {
     const manager = await prisma.user.findUnique({
       where: {
         id: managerId
@@ -30,9 +30,15 @@ export const dashboardService = {
       where: {
         companyId: manager?.companyId,
         sector: sector !== "" ? sector : undefined,
-        age: age ? age : undefined,
+        age: {
+          gte: baseAge ? baseAge : undefined,
+          lte: ceilAge ? ceilAge : undefined
+        },
         gender: gender !== "" ? gender : undefined,
-        companyTime: companyTime ? companyTime : undefined,
+        companyTime: {
+          gte: baseCompanyTime ? baseCompanyTime : undefined,
+          lte: ceilCompanyTime ? ceilCompanyTime : undefined
+        },
       },
       include: {
         Answer: true
