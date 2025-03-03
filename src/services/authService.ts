@@ -32,7 +32,7 @@ export const authService = {
     }
 
     if (user.Answer.length > 0) {
-      throw new Error("UNAUTHORIZED");
+      throw new Error("FORBIDDEN");
     }
 
     return authService.handleLoginEmployee(user, registration);
