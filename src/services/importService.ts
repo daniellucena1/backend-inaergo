@@ -57,17 +57,15 @@ export const importService = {
 
           const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
             registration: data.matricula,
-            email: data.email,
             name: data.nome,
             age: parseInt(data.idade as unknown as string, 10),
             companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
             positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
             meritalStatus: data['estado civil'],
-            healthProblemLastYear: data['problemas de saude'],
             gender: data.genero,
             position: data.cargo,
             sector: data.setor,
-            scholarship: data.escolaridade,
+            scholarship: data.escolaridade ? data.escolaridade : null,
             companyId
           }
 
@@ -110,17 +108,15 @@ export const importService = {
 
         const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
           registration: String(data.matricula),
-          email: data.email,
           name: data.nome,
           age: parseInt(data.idade as unknown as string, 10),
           companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
           positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
           meritalStatus: data['estado civil'],
-          healthProblemLastYear: String(data['problemas de saude']),
           gender: data.genero,
           position: data.cargo,
           sector: data.setor,
-          scholarship: data.escolaridade,
+          scholarship: data.escolaridade ? data.escolaridade : null,
           companyId
         };
 
