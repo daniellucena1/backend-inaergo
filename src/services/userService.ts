@@ -62,6 +62,24 @@ export const userService = {
     return user
   },
 
+  getByCompanyId: async (companyId: number) => {
+    const managers = await prisma.user.findMany({
+      where: {
+        companyId,
+        type: "MANAGER"
+      },
+      omit: {
+        password: true
+      }
+    });
+
+    if ( !managers ) {
+      throw new Error('Usuários não encontrados');
+    }
+
+    return managers
+  },
+
   update: async (id: number, name: string, email: string, password: string) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const admin = await prisma.user.update({

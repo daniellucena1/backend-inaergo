@@ -47,6 +47,22 @@ export const userController = {
     }
   },
 
+  async getByCompanyId(req: Request, res: Response) {
+    try {
+      const { companyId } = req.params;
+
+      const managers = await userService.getByCompanyId(parseInt(companyId));
+
+      res.json(managers);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({ error: error.message });
+      }
+
+      res.status(500).json({ error: 'Erro ao buscar usuários' });
+    }
+  },
+
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
