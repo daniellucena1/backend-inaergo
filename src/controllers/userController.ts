@@ -47,11 +47,16 @@ export const userController = {
     }
   },
 
-  async getByCompanyId(req: Request, res: Response) {
+  async getManagers(req: Request, res: Response) {
     try {
-      const { companyId } = req.params;
 
-      const managers = await userService.getByCompanyId(parseInt(companyId));
+      const schema = z.object({
+        companyId: z.coerce.number().optional()
+      });
+
+      const { companyId } = schema.parse(req.query);
+
+      const managers = await userService.getManagers(Number(companyId));
 
       res.json(managers);
     } catch (error) {

@@ -62,10 +62,11 @@ export const userService = {
     return user
   },
 
-  getByCompanyId: async (companyId: number) => {
+  getManagers: async (companyId: number) => {
+
     const managers = await prisma.user.findMany({
       where: {
-        companyId,
+        companyId: companyId ? companyId : undefined,
         type: "MANAGER"
       },
       omit: {
