@@ -62,7 +62,7 @@ export const importService = {
             companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
             positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
             meritalStatus: data['estado civil'],
-            gender: data.genero,
+            gender: data.genero ? data.genero : "Não informado",
             position: data.cargo,
             sector: data.setor,
             scholarship: data.escolaridade ? data.escolaridade : null,

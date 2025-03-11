@@ -49,7 +49,6 @@ export const employeeService = {
       where: { registration: registration },
       data: {
         name: name !== "" ? name : employee.name,
-        email: email !== "" ? email : employee.email,
         registration: registration !== "" ? registration : employee.registration,
         age: age ? age : employee.age, 
         gender: gender !== "" ? gender : employee.gender, 
@@ -59,7 +58,6 @@ export const employeeService = {
         position: position !== "" ? position : employee.position, 
         companyTime: companyTime ? companyTime : employee.companyTime, 
         positionTime: positionTime ? positionTime : employee.positionTime, 
-        healthProblemLastYear: healthProblemLastYear !== "" ? healthProblemLastYear : employee.healthProblemLastYear, 
         companyId: companyId ? companyId : employee.companyId
       },
     });
