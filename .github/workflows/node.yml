@@ -37,4 +37,6 @@ jobs:
             git status
             npm ci
             npm run build
+            npx prisma migrate deploy
+            npx prisma generate
             pm2 restart backend-inaergo-dev
