@@ -35,5 +35,24 @@ export const companyService = {
     }
 
     return companies
+  },
+
+  updateCompany: async (companyId: number, name: string, cnpj: string) => {
+
+    const company = await prisma.company.update({
+      where: {
+        id: companyId
+      },
+      data: {
+        name: name,
+        cnpj: cnpj
+      }
+    });
+
+    if (!company) {
+      throw new Error("Erro ao atualizar empresa");
+    } 
+
+    return company;
   }
 }

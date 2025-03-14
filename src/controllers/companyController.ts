@@ -30,5 +30,25 @@ export const companyController = {
 
       res.status(500).json({ message: 'Erro ao buscar empresas' });
     }
+  },
+
+  updateCompany: async (req: Request, res: Response) => {
+    try {
+
+      const companyId = Number(req.params.id);
+      const {name, cnpj} = req.body;
+
+      if (!companyId) {
+        throw new Error('ID da empresa não informado');
+      }
+
+      const company = await companyService.updateCompany(companyId, name, cnpj);
+
+      res.json(company);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
   }
 }
