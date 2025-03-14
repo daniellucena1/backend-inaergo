@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
-import { Employee } from '@prisma/client';
+// import { Employee } from '@prisma/client';
 import { importService } from '../services/importService';
 
 export const importController = {
@@ -27,9 +27,9 @@ export const importController = {
     }
     
     try {
-      const results: Employee[] = await importService.importFile(path, managerId, fileExtension);
+      const results = await importService.importFile(path, managerId, fileExtension);
 
-      res.status(201).json({ message: 'Arquivo importado com sucesso', results});
+      res.status(201).json({results});
     } catch (error) {
       fs.unlink(path, () => {});
       return res.status(500).json({

@@ -44,6 +44,7 @@ export const importService = {
   importFromCsv: async (path: string, companyId: number) => {
 
     let employees: Employee[] = [];
+    let response = {};
 
     const results: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission">[] = [];
 
@@ -73,10 +74,31 @@ export const importService = {
         })
         .on('end', async () => {
           try {
-            employees = await prisma.employee.createManyAndReturn({
-              data: results,
-              skipDuplicates: true,
+
+            const existingEmployees = await prisma.employee.findMany({
+              select: { registration: true }
             });
+
+            const existingRegistrations = existingEmployees.map((employee) => employee.registration);
+
+            const newEmployees = results.filter((employee) => !existingRegistrations.includes(employee.registration));
+            const duplicateEmployees = results.filter((employee) => existingRegistrations.includes(employee.registration));
+
+            if (newEmployees.length > 0) {
+              employees = await prisma.employee.createManyAndReturn({
+                data: results,
+                skipDuplicates: true,
+              });
+            }
+
+            response = {
+              employees,
+              inserted: newEmployees.length,
+              duplicated: duplicateEmployees.length,
+              duplicateUsers: duplicateEmployees,
+              message: duplicateEmployees.length > 0 ? `Foram ignorados ${duplicateEmployees.length} registros duplicados` : "Todos os registros foram inseridos com sucesso"
+            }
+            
             resolve(results);
           } catch (error) {
             reject(error);
@@ -87,7 +109,7 @@ export const importService = {
         });
     });
 
-    return employees;
+    return response;
   },
 
   importFromExcel: async (path: string, companyId: number) => {
@@ -124,11 +146,28 @@ export const importService = {
       });
     }
 
-    employees = await prisma.employee.createManyAndReturn({
-      data: results,
-      skipDuplicates: true,
+    const existingEmployees = await prisma.employee.findMany({
+      select: { registration: true }
     });
 
-    return employees;
+    const existingRegistrations = existingEmployees.map((employee) => employee.registration);
+
+    const newEmployees = results.filter((employee) => !existingRegistrations.includes(employee.registration));
+    const duplicateEmployees = results.filter((employee) => existingRegistrations.includes(employee.registration));
+
+    if (newEmployees.length > 0) {
+      employees = await prisma.employee.createManyAndReturn({
+        data: results,
+        skipDuplicates: true,
+      });
+    }
+
+    return {
+      employees,
+      inserted: newEmployees.length,
+      duplicated: duplicateEmployees.length,
+      duplicateUsers: duplicateEmployees,
+      message: duplicateEmployees.length > 0 ? `Foram ignorados ${duplicateEmployees.length} registros duplicados` : "Todos os registros foram inseridos com sucesso"
+    }
   },
 }
