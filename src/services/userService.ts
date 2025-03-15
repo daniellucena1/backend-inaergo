@@ -81,14 +81,19 @@ export const userService = {
     return managers
   },
 
-  update: async (id: number, name: string, email: string, password: string) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  update: async (id: number, name?: string, email?: string, password?: string) => {
+    
+    let hashedPassword;
+    if(password !== undefined) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
     const admin = await prisma.user.update({
       where: { id: id },
       data: {
-        name,
-        email,
-        password: hashedPassword,
+        name: name !== undefined ? name : undefined,
+        email: email !== undefined ? email : undefined,
+        password: password !== undefined ? hashedPassword : undefined,
       },
     });
 
