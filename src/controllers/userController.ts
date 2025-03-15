@@ -70,8 +70,13 @@ export const userController = {
 
   async update(req: Request, res: Response) {
     try {
+      const schema = z.object({
+        name: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional()
+      })
       const { id } = req.params;
-      const { name, email, password } = req.body;
+      const { name, email, password } = schema.parse(req.body);
 
       res.json(await userService.update(parseInt(id), name, email, password));
     } catch (error) {
