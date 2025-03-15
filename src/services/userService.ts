@@ -95,6 +95,9 @@ export const userService = {
         email: email !== undefined ? email : undefined,
         password: password !== undefined ? hashedPassword : undefined,
       },
+      omit: {
+        password: true
+      }
     });
 
     if (!admin) {
