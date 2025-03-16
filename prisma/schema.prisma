@@ -35,16 +35,14 @@ enum UserType {
 model Employee {
   id                    Int      @id @default(autoincrement())
   name                  String
-  email                 String   @unique
   age                   Int
-  gender                String
-  scholarship           String
+  gender                String?
+  scholarship           String?
   meritalStatus         String
   sector                String
   position              String
   companyTime           Int
-  positionTime          Int
-  healthProblemLastYear String
+  positionTime          Int?
   registration          String   @unique
   permission            Boolean  @default(false)
   createdAt             DateTime @default(now())

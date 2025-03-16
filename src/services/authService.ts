@@ -35,7 +35,7 @@ export const authService = {
     }
 
     if (user.Answer.length > 0) {
-      throw new BadRequest("Funcionário já respondeu a pesquisa");
+      throw new Forbidden("Funcionário já respondeu a pesquisa");
     }
 
     return authService.handleLoginEmployee(user, registration);

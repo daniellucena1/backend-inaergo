@@ -16,12 +16,12 @@ import prisma from "./prisma"
 // 3.7 - 5 Risco Baixo
 
 export const dashboardService = {
-  getDashboardInfo: async (managerId: number, sector?: string, age?: number, gender?: string, companyTime?: number) => {
+  getDashboardInfo: async (managerId: number, sector?: string, baseAge?: number, ceilAge?: number, gender?: string, baseCompanyTime?: number, ceilCompanyTime?: number) => {
     const manager = await prisma.user.findUnique({
       where: {
         id: managerId
       }
-    })
+    });
 
     if (manager?.companyId === null) {
       throw new Unauthorized('Usuário não é um gerente');
@@ -31,20 +31,30 @@ export const dashboardService = {
       where: {
         companyId: manager?.companyId,
         sector: sector !== "" ? sector : undefined,
-        age: age ? age : undefined,
+        age: {
+          gte: baseAge ? baseAge : undefined,
+          lte: ceilAge ? ceilAge : undefined
+        },
         gender: gender !== "" ? gender : undefined,
-        companyTime: companyTime ? companyTime : undefined,
+        companyTime: {
+          gte: baseCompanyTime ? baseCompanyTime : undefined,
+          lte: ceilCompanyTime ? ceilCompanyTime : undefined
+        },
       },
       include: {
         Answer: true
       }
-    })
+    });
+
+    const allEmployes = await prisma.employee.findMany();
+
+    const uniqueSectors = [...new Set(allEmployes.map(employee => employee.sector))];
 
     const pages = await prisma.page.findMany({
       include: {
         Question: true
       }
-    })
+    });
 
     const response = pages.map((p) => {
       let altoPagina = 0;
@@ -61,7 +71,6 @@ export const dashboardService = {
           let baixo = 0;
           employees.map((e) => {
             const answers = e.Answer.filter(a => a.questionId === q.id)
-            console.log(answers)
 
             answers.map((a) => {
               if (a.value >= 1 && a.value <= 2.29) {
@@ -118,6 +127,9 @@ export const dashboardService = {
       }
     })
 
-    return response;
+    return {
+      pages: response,
+      sectors: uniqueSectors
+    };
   }
 }

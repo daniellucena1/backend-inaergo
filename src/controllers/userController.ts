@@ -38,11 +38,37 @@ export const userController = {
       next(error);
     }
   },
-
-  async update(req: Request, res: Response, next: NextFunction) {
+  
+  async getManagers(req: Request, res: Response) {
     try {
+
+      const schema = z.object({
+        companyId: z.coerce.number().optional()
+      });
+
+      const { companyId } = schema.parse(req.query);
+
+      const managers = await userService.getManagers(Number(companyId));
+
+      res.json(managers);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({ error: error.message });
+      }
+
+      res.status(500).json({ error: 'Erro ao buscar usuários' });
+    }
+  },
+
+  async update(req: Request, res: Response) {
+    try {
+      const schema = z.object({
+        name: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional()
+      })
       const { id } = req.params;
-      const { name, email, password } = req.body;
+      const { name, email, password } = schema.parse(req.body);
 
       res.json(await userService.update(parseInt(id), name, email, password));
     } catch (error) {

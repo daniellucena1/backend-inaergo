@@ -9,18 +9,20 @@ export const dashboardController = {
 
       const schema = z.object({
         sector: z.string().optional(),
-        age: z.coerce.number().optional(),
+        baseAge: z.coerce.number().optional(),
+        ceilAge: z.coerce.number().optional(),
         gender: z.string().optional(),
-        companyTime: z.coerce.number().optional(),
+        baseCompanyTime: z.coerce.number().optional(),
+        ceilCompanyTime: z.coerce.number().optional()
       });
 
-      const { sector, age, gender, companyTime } = schema.parse(req.query);
+      const { sector, baseAge, ceilAge, gender, baseCompanyTime, ceilCompanyTime } = schema.parse(req.query);
 
       if (managerId === undefined) {
         throw new Error("Manager não encontrado")
       }
 
-      const dashboardInfo = await dashboardService.getDashboardInfo(Number(managerId), sector, age, gender, companyTime);
+      const dashboardInfo = await dashboardService.getDashboardInfo(Number(managerId), sector, baseAge, ceilAge, gender, baseCompanyTime, ceilCompanyTime);
 
       res.json(dashboardInfo)
     } catch (error) {
