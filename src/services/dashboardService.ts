@@ -96,15 +96,15 @@ export const dashboardService = {
             data: {
               0: {
                 value: Number(((alto / total) * 100).toFixed(2)),
-                label: "Alto"
+                label: "Risco Alto"
               },
               1: {
                 value: Number(((medio / total) * 100).toFixed(2)),
-                label: "Médio"
+                label: "Risco Médio"
               },
               2: {
                 value: Number(((baixo / total) * 100).toFixed(2)),
-                label: "Baixo"
+                label: "Risco Baixo"
               },
             }
           }
@@ -112,15 +112,15 @@ export const dashboardService = {
         data: {
           0: {
             value: Number(((altoPagina / totalPagina) * 100).toFixed(2)),
-            label: "Alto"
+            label: "Risco Alto"
           },
           1: {
             value: Number(((medioPagina / totalPagina) * 100).toFixed(2)),
-            label: "Médio"
+            label: "Risco Médio"
           },
           2: {
             value: Number(((baixoPagina / totalPagina) * 100).toFixed(2)),
-            label: "Baixo"
+            label: "Risco Baixo"
           },
         }
       }
