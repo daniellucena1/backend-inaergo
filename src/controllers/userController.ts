@@ -19,10 +19,6 @@ export const userController = {
 
       res.json(user);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors, status: 400 });
-      }
-
       next(error);
     }
   },
@@ -39,7 +35,7 @@ export const userController = {
     }
   },
   
-  async getManagers(req: Request, res: Response) {
+  async getManagers(req: Request, res: Response, next: NextFunction) {
     try {
 
       const schema = z.object({
@@ -52,15 +48,11 @@ export const userController = {
 
       res.json(managers);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(404).json({ error: error.message });
-      }
-
-      res.status(500).json({ error: 'Erro ao buscar usuários' });
+      next(error);
     }
   },
 
-  async update(req: Request, res: Response) {
+  async update(req: Request, res: Response, next: NextFunction) {
     try {
       const schema = z.object({
         name: z.string().optional(),
@@ -72,7 +64,7 @@ export const userController = {
 
       res.json(await userService.update(parseInt(id), name, email, password));
     } catch (error) {
-      next(error);
+      next(error)
     }
   },
 

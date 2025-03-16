@@ -1,3 +1,4 @@
+import { Forbidden } from "../@errors/Forbidden";
 import { InternalServerError } from "../@errors/InternalServerError";
 import { NotFound } from "../@errors/NotFound";
 import prisma from "./prisma";
@@ -80,11 +81,11 @@ export const employeeService = {
     });
 
     if (!manager) {
-      throw new Error("Gestor não cadastrado");
+      throw new NotFound("Gestor não cadastrado");
     }
 
     if (!manager.companyId) {
-      throw new Error("Autorização de gestor necessária");
+      throw new Forbidden("Autorização de gestor necessária");
     }
     
     const employees = await prisma.employee.findMany({

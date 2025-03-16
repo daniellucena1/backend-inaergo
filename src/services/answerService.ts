@@ -1,4 +1,4 @@
-import { BadRequest } from "../@errors/BadRequest";
+import { Forbidden } from "../@errors/Forbidden";
 import { NotFound } from "../@errors/NotFound";
 import { AnswerDTO } from "../types/answerDTO";
 import prisma from "./prisma";
@@ -26,7 +26,7 @@ export const answerService = {
       }
   
       if (await empCheck()) {
-        throw new BadRequest('Funcionário não pode responder mais de uma vez');
+        throw new Forbidden('Funcionário não pode responder mais de uma vez');
       }
 
       return prisma.answer.create({

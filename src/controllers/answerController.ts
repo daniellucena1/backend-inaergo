@@ -4,8 +4,6 @@ import { AnswerDTO } from "../types/answerDTO";
 import { z } from "zod";
 import { answerService } from "../services/answerService";
 import { NotFound } from "../@errors/NotFound";
-import { BadRequest } from "../@errors/BadRequest";
-import { HttpStatusCode } from "../types/HttpStatusCode";
 
 export const answerController = {
   createAnswer: async (req: Request, res: Response, next: NextFunction) => {
@@ -27,15 +25,6 @@ export const answerController = {
 
       res.status(201).json(answer);
     } catch (error) {
-      if (error instanceof NotFound) {
-        res.status(HttpStatusCode.NOT_FOUND).json({
-          error: error.message
-        });
-      } else if (error instanceof BadRequest) {
-        res.status(HttpStatusCode.BAD_REQUEST).json({
-          error: error.message
-        });
-      }
       next(error);
     }
   },

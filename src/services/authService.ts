@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import prisma from './prisma';
 import { Employee, User } from '@prisma/client';
 import { NotFound } from '../@errors/NotFound';
-import { BadRequest } from '../@errors/BadRequest';
 import { Unauthorized } from '../@errors/Unauthorized';
+import { Forbidden } from '../@errors/Forbidden';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

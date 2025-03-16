@@ -14,21 +14,17 @@ export const companyController = {
     }
   },
 
-  getAllCompanies: async (req: Request, res: Response) => {
+  getAllCompanies: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const companies = await companyService.getAllCompanies();
 
       res.json(companies);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
-      }
-
-      res.status(500).json({ message: 'Erro ao buscar empresas' });
+      next(error);
     }
   },
 
-  updateCompany: async (req: Request, res: Response) => {
+  updateCompany: async (req: Request, res: Response, next: NextFunction) => {
     try {
 
       const companyId = Number(req.params.id);
@@ -42,9 +38,7 @@ export const companyController = {
 
       res.json(company);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
-      }
+      next(error);
     }
   }
 }

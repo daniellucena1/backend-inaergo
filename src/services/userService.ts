@@ -77,17 +77,17 @@ export const userService = {
       }
     });
 
-    if ( !managers ) {
-      throw new Error('Usuários não encontrados');
+    if (!managers) {
+      throw new NotFound('Usuários não encontrados');
     }
 
     return managers
   },
 
   update: async (id: number, name?: string, email?: string, password?: string) => {
-    
+
     let hashedPassword;
-    if(password !== undefined) {
+    if (password !== undefined) {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 

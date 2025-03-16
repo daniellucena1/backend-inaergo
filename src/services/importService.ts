@@ -7,7 +7,7 @@ import xlsx from 'xlsx';
 import { DataExcel } from '../types/dataExcel';
 import { BadRequest } from '../@errors/BadRequest';
 import { NotFound } from '../@errors/NotFound';
-import { Unauthorized } from '../@errors/Unauthorized';
+import { Forbidden } from '../@errors/Forbidden';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
@@ -27,7 +27,7 @@ export const importService = {
     }
 
     if (manager.companyId === null) {
-      throw new Unauthorized('Usuário não é um gerente');
+      throw new Forbidden('Usuário não é um gerente');
     }
 
     const companyId = manager?.companyId;
@@ -56,7 +56,7 @@ export const importService = {
         .pipe(csvParser())
         .on('data', (data: DataExcel) => {
           if (!data.matricula) {
-            throw new Error('Matrícula não encontrada no CSV');
+            throw new NotFound('Matrícula não encontrada no CSV');
           }
 
           const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
@@ -128,7 +128,7 @@ export const importService = {
       const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]]);
       temp.forEach((data) => {
         if (!data.matricula) {
-          throw new Error('Matrícula não encontrada no Excel');
+          throw new NotFound('Matrícula não encontrada no Excel');
         }
 
         const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
