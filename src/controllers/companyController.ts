@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { companyService } from "../services/companyService";
 
 export const companyController = {
-  createCompany: async (req: Request, res: Response) => {
+  createCompany: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, cnpj } = req.body;
       
@@ -10,11 +10,7 @@ export const companyController = {
 
       res.json(company)
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
-      }
-
-      res.status(500).json({ message: 'Erro ao criar empresa' });
+      next(error);
     }
   },
 

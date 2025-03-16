@@ -2,6 +2,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from './prisma';
 import { Employee, User } from '@prisma/client';
+import { NotFound } from '../@errors/NotFound';
+import { BadRequest } from '../@errors/BadRequest';
+import { Unauthorized } from '../@errors/Unauthorized';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -14,7 +17,7 @@ export const authService = {
     const user = await prisma.user.findUnique({ where: { email: email } });
 
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new NotFound("Usuário não encontrado");
     }
 
     return authService.handleLogin(user, password);
@@ -28,11 +31,11 @@ export const authService = {
     });
 
     if (!user) {
-      throw new Error("Funcionário não encontrado");
+      throw new NotFound("Funcionário não encontrado");
     }
 
     if (user.Answer.length > 0) {
-      throw new Error("FORBIDDEN");
+      throw new Forbidden("Funcionário já respondeu a pesquisa");
     }
 
     return authService.handleLoginEmployee(user, registration);
@@ -42,7 +45,7 @@ export const authService = {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      throw new Error("password inválida");
+      throw new Unauthorized("password inválida");
     }
 
     const token = jwt.sign(
@@ -64,7 +67,7 @@ export const authService = {
     const validRegistration = user.registration.trim() === registration.trim();
 
     if (!validRegistration) {
-      throw new Error("registration inválida");
+      throw new Unauthorized("registration inválida");
     }
 
     const token = jwt.sign(
@@ -83,13 +86,13 @@ export const authService = {
   },
 
   verifyToken: (token: string) => {
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET) as User;
-      return decoded;
-    } catch (error) {
-      console.error(error);
-      throw new Error("Token inválido");
+    const decoded = jwt.verify(token, JWT_SECRET) as User;
+
+    if (!decoded) {
+      throw new Unauthorized("Token Inválido");
     }
+
+    return decoded;
   }
 
 };

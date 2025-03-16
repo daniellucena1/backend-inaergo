@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 // import { Employee } from '@prisma/client';
 import { importService } from '../services/importService';

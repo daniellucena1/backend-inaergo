@@ -5,6 +5,9 @@ import { Employee } from '@prisma/client';
 // import bcrypt from 'bcryptjs';
 import xlsx from 'xlsx';
 import { DataExcel } from '../types/dataExcel';
+import { BadRequest } from '../@errors/BadRequest';
+import { NotFound } from '../@errors/NotFound';
+import { Unauthorized } from '../@errors/Unauthorized';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
@@ -12,7 +15,7 @@ import { DataExcel } from '../types/dataExcel';
 export const importService = {
   importFile: async(path: string, managerId: number, fileType: string) => {
     if (!path) {
-      throw new Error('Nenhum arquivo enviado');
+      throw new BadRequest('Nenhum arquivo enviado');
     }
 
     const manager = await prisma.user.findUnique({
@@ -20,11 +23,11 @@ export const importService = {
     })
 
     if (!manager) {
-      throw new Error('Gerente não encontrado');
+      throw new NotFound('Gerente não encontrado');
     }
 
     if (manager.companyId === null) {
-      throw new Error('Usuário não é um gerente');
+      throw new Unauthorized('Usuário não é um gerente');
     }
 
     const companyId = manager?.companyId;
