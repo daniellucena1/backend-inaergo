@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { authService } from "../services/authService";
 import prisma from "../services/prisma";
 import { User } from "@prisma/client";
+import { Unauthorized } from "../@errors/Unauthorized";
+import { NotFound } from "../@errors/NotFound";
 
 declare module 'express' {
   export interface Request {
@@ -17,7 +19,7 @@ export const authMiddleware = {
     console.log(token);
 
     if (!token) {
-      res.status(401).json({ error: "Token não encontrado" });
+      throw new Unauthorized("Token não fornecido");
     }
 
     try {
@@ -27,7 +29,7 @@ export const authMiddleware = {
       return next();
     } catch (error) {
       console.error(error);
-      return res.status(403).json({ error: "Token inválido" });
+      next(error)
     }
   },
 
@@ -37,16 +39,16 @@ export const authMiddleware = {
 
       const admin = await prisma.user.findUnique({ where: { email: req.user?.email, type: "ADMIN" } });
       if (!admin) {
-        return res.status(401).json({ error: "Admin não encontrado" });
+        throw new NotFound("Admin não encontrado");
       }
 
       if (admin.permission !== true) {
-        return res.status(401).json({ error: "Acesso negado. Requer admin" });
+        throw new Unauthorized("Acesso negado. Requer admin");
       };
 
       return next();
     } catch (error) {
-      return res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
+      next(error);
     }
 
   },
@@ -61,16 +63,16 @@ export const authMiddleware = {
       });
 
       if (!manager) {
-        return res.status(401).json({ error: "Manager não encontrado" });
+        throw new NotFound("Manager não encontrado");
       }
 
       if (manager.permission !== true) {
-        return res.status(401).json({ error: "Acesso negado. Requer manager" });
+        throw new Unauthorized("Acesso negado. Requer manager");
       }
 
       return next();
     } catch (error) {
-      return res.status(401).json({ error: error instanceof Error ? error.message : 'Erro desconhecido' });
+      next(error);
     }
   }
 }

@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import prisma from './prisma';
 import { Employee, User } from '@prisma/client';
 import { NotFound } from '../@errors/NotFound';
-import { Unauthorized } from '../@errors/Unauthorized';
 import { Forbidden } from '../@errors/Forbidden';
+import { BadRequest } from '../@errors/BadRequest';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -45,7 +45,7 @@ export const authService = {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      throw new Unauthorized("password inválida");
+      throw new BadRequest("Email ou senha inválidos");
     }
 
     const token = jwt.sign(
@@ -67,7 +67,7 @@ export const authService = {
     const validRegistration = user.registration.trim() === registration.trim();
 
     if (!validRegistration) {
-      throw new Unauthorized("registration inválida");
+      throw new BadRequest("Matrícula inválida");
     }
 
     const token = jwt.sign(
@@ -89,7 +89,7 @@ export const authService = {
     const decoded = jwt.verify(token, JWT_SECRET) as User;
 
     if (!decoded) {
-      throw new Unauthorized("Token Inválido");
+      throw new BadRequest("Token Inválido");
     }
 
     return decoded;
