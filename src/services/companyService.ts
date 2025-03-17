@@ -1,3 +1,6 @@
+import { BadRequest } from "../@errors/BadRequest";
+import { InternalServerError } from "../@errors/InternalServerError";
+import { NotFound } from "../@errors/NotFound";
 import prisma from "./prisma"
 
 export const companyService = {
@@ -9,7 +12,7 @@ export const companyService = {
     });
 
     if ( companyExist ) {
-      throw new Error("Empresa já cadastrada");
+      throw new BadRequest("Empresa já cadastrada");
     }
 
     const company = await prisma.company.create({
@@ -20,7 +23,7 @@ export const companyService = {
     });
 
     if (!company) {
-      throw new Error("Erro ao criar empresa");
+      throw new InternalServerError("Erro ao criar empresa");
     }
 
     return company;
@@ -31,7 +34,7 @@ export const companyService = {
     const companies = await prisma.company.findMany();
 
     if (!companies) {
-      throw new Error("Nenhuma empresa encontrada");
+      throw new NotFound("Nenhuma empresa encontrada");
     }
 
     return companies
@@ -50,7 +53,7 @@ export const companyService = {
     });
 
     if (!company) {
-      throw new Error("Erro ao atualizar empresa");
+      throw new InternalServerError("Erro ao atualizar empresa");
     } 
 
     return company;

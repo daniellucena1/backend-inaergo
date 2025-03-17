@@ -1,3 +1,6 @@
+import { Forbidden } from "../@errors/Forbidden";
+import { InternalServerError } from "../@errors/InternalServerError";
+import { NotFound } from "../@errors/NotFound";
 import prisma from "./prisma";
 // import bcrypt from 'bcryptjs';
 
@@ -42,7 +45,7 @@ export const employeeService = {
     });
 
     if (!employee) {
-      throw new Error('Usuário não cadastrado');
+      throw new NotFound('Usuário não cadastrado');
     }
 
     const updatedEmployee = await prisma.employee.update({
@@ -63,7 +66,7 @@ export const employeeService = {
     });
 
     if (!updatedEmployee) {
-      throw new Error('Erro ao atualizar usuário');
+      throw new InternalServerError('Erro ao atualizar usuário');
     }
 
     return updatedEmployee;
@@ -78,11 +81,11 @@ export const employeeService = {
     });
 
     if (!manager) {
-      throw new Error("Gestor não cadastrado");
+      throw new NotFound("Gestor não cadastrado");
     }
 
     if (!manager.companyId) {
-      throw new Error("Autorização de gestor necessária");
+      throw new Forbidden("Autorização de gestor necessária");
     }
     
     const employees = await prisma.employee.findMany({
@@ -92,7 +95,7 @@ export const employeeService = {
     });
 
     if (!employees) {
-      throw new Error('Nenhum usuário encontrado');
+      throw new NotFound('Nenhum usuário encontrado');
     }
 
     return employees;
@@ -101,6 +104,12 @@ export const employeeService = {
   deleteEmployee: async (id: number) => {
     await prisma.employee.delete({ where: { id: id } });
 
+    const deletedEmployee = await prisma.employee.findUnique({where: {id}});
+
+    if (deletedEmployee) {
+      throw new InternalServerError("Falha no servidor");
+    }
+    
     return true;
   }
 }
