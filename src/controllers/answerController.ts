@@ -1,11 +1,12 @@
 // import prisma from "../services/prisma";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AnswerDTO } from "../types/answerDTO";
 import { z } from "zod";
 import { answerService } from "../services/answerService";
+import { NotFound } from "../@errors/NotFound";
 
 export const answerController = {
-  createAnswer: async (req: Request, res: Response) => {
+  createAnswer: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const schema = z.object({
         answers: z.array(z.object({
@@ -17,32 +18,29 @@ export const answerController = {
       const data = schema.parse(req.body);
 
       if (req.user === undefined) {
-        throw new Error('Usuário não encontrado');
+        throw new NotFound('Usuário não encontrado');
       }
 
       const answer = await answerService.createAnswerFromJson(data as AnswerDTO, req.user.id);
 
       res.status(201).json(answer);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      }
+      next(error);
     }
   },
 
-  getAnswer: async (req: Request, res: Response) => {
+  getAnswer: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const answers = await answerService.getAnswers();
 
       res.status(200).json(answers);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      }
+    
+      next(error);
     }
   },
 
-  getAnswerByEmployeeId: async (req: Request, res: Response) => {
+  getAnswerByEmployeeId: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const employeeId: string = req.params.id;
 
@@ -50,9 +48,8 @@ export const answerController = {
 
       res.status(200).json(answer);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      }
+
+      next(error);
     }
   }
 };

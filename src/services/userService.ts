@@ -1,3 +1,6 @@
+import { BadRequest } from "../@errors/BadRequest";
+import { InternalServerError } from "../@errors/InternalServerError";
+import { NotFound } from "../@errors/NotFound";
 import prisma from "./prisma";
 import bcrypt from "bcryptjs";
 
@@ -12,7 +15,7 @@ export const userService = {
     });
 
     if (findedUser) {
-      throw new Error('Usuário já cadastrado');
+      throw new BadRequest('Usuário já cadastrado');
     }
 
     if (companyId) {
@@ -23,7 +26,7 @@ export const userService = {
       });
 
       if (!findedCompany) {
-        throw new Error('Empresa não encontrada');
+        throw new NotFound('Empresa não encontrada');
       }
     }
 
@@ -41,7 +44,7 @@ export const userService = {
     });
 
     if (!admin) {
-      throw new Error('Erro ao criar usuário');
+      throw new InternalServerError('Erro ao criar usuário');
     }
 
     return admin;
@@ -56,7 +59,7 @@ export const userService = {
     });
 
     if (!user) {
-      throw new Error('Usuário não encontrado');
+      throw new NotFound('Usuário não encontrado');
     }
 
     return user
@@ -74,17 +77,17 @@ export const userService = {
       }
     });
 
-    if ( !managers ) {
-      throw new Error('Usuários não encontrados');
+    if (!managers) {
+      throw new NotFound('Usuários não encontrados');
     }
 
     return managers
   },
 
   update: async (id: number, name?: string, email?: string, password?: string) => {
-    
+
     let hashedPassword;
-    if(password !== undefined) {
+    if (password !== undefined) {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 
@@ -101,7 +104,7 @@ export const userService = {
     });
 
     if (!admin) {
-      throw new Error('Erro ao atualizar usuário');
+      throw new BadRequest('Erro ao atualizar usuário');
     }
 
     return admin

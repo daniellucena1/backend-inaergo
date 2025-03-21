@@ -5,6 +5,9 @@ import { Employee } from '@prisma/client';
 // import bcrypt from 'bcryptjs';
 import xlsx from 'xlsx';
 import { DataExcel } from '../types/dataExcel';
+import { BadRequest } from '../@errors/BadRequest';
+import { NotFound } from '../@errors/NotFound';
+import { Forbidden } from '../@errors/Forbidden';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
@@ -12,7 +15,7 @@ import { DataExcel } from '../types/dataExcel';
 export const importService = {
   importFile: async(path: string, managerId: number, fileType: string) => {
     if (!path) {
-      throw new Error('Nenhum arquivo enviado');
+      throw new BadRequest('Nenhum arquivo enviado');
     }
 
     const manager = await prisma.user.findUnique({
@@ -20,11 +23,11 @@ export const importService = {
     })
 
     if (!manager) {
-      throw new Error('Gerente não encontrado');
+      throw new NotFound('Gerente não encontrado');
     }
 
     if (manager.companyId === null) {
-      throw new Error('Usuário não é um gerente');
+      throw new Forbidden('Usuário não é um gerente');
     }
 
     const companyId = manager?.companyId;
@@ -53,7 +56,7 @@ export const importService = {
         .pipe(csvParser())
         .on('data', (data: DataExcel) => {
           if (!data.matricula) {
-            throw new Error('Matrícula não encontrada no CSV');
+            throw new NotFound('Matrícula não encontrada no CSV');
           }
 
           const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
@@ -146,7 +149,7 @@ export const importService = {
       const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]]);
       temp.forEach((data) => {
         if (!data.matricula) {
-          throw new Error('Matrícula não encontrada no Excel');
+          throw new NotFound('Matrícula não encontrada no Excel');
         }
 
         const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {

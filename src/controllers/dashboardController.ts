@@ -1,9 +1,9 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { dashboardService } from '../services/dashboardService'
 import { z } from 'zod';
 
 export const dashboardController = {
-  getDashboardInfo: async (req: Request, res: Response) => {
+  getDashboardInfo: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const managerId: number | undefined = req.user?.id;
 
@@ -26,17 +26,7 @@ export const dashboardController = {
 
       res.json(dashboardInfo)
     } catch (error) {
-      if ( error instanceof z.ZodError) {
-        res.status(400).json({error: error.errors})
-      } else if (error instanceof Error) {
-        res.status(400).json({
-          message: error.message
-        })
-      }
-
-      res.status(500).json({
-        message: "Erro interno do servidor"
-      })
+      next(error);
     }
   }
 }

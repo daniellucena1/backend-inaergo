@@ -1,3 +1,5 @@
+import { Forbidden } from "../@errors/Forbidden";
+import { NotFound } from "../@errors/NotFound";
 import { AnswerDTO } from "../types/answerDTO";
 import prisma from "./prisma";
 
@@ -9,7 +11,7 @@ export const answerService = {
     });
 
     if (!employeeExists) {
-      throw new Error('Funcionário não encontrado');
+      throw new NotFound(`Funcionário com ID ${employeeId} não econtrado`);
     }
 
     const createdAnswer = await Promise.all(answer.answers.map(async (ans) => {
@@ -24,7 +26,7 @@ export const answerService = {
       }
   
       if (await empCheck()) {
-        throw new Error('Funcionário não pode responder mais de uma vez');
+        throw new Forbidden('Funcionário não pode responder mais de uma vez');
       }
 
       return prisma.answer.create({
@@ -46,7 +48,7 @@ export const answerService = {
     const answer = await prisma.answer.findMany({});
 
     if (!answer) {
-      throw new Error('Resposta não encontrada');
+      throw new NotFound('Respostas não encontradas');
     }
 
     return {
@@ -66,7 +68,7 @@ export const answerService = {
     });
 
     if (!answer) {
-      throw new Error('Resposta não encontrada');
+      throw new NotFound('Resposta não encontrada');
     }
 
     return {
