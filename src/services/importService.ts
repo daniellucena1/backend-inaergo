@@ -14,6 +14,10 @@ import { Forbidden } from '../@errors/Forbidden';
 
 export const importService = {
   normalizeGender: (gender: string) => {
+
+    if (!gender) {
+      return "NI";
+    }
     
     const mapGender: Record<string, string> = {
       "masculino": "M",
@@ -22,11 +26,8 @@ export const importService = {
       "f": "F",
       "nao informado": "NI",
       "ni": "NI",
-      "": "NI"
     }
     const normalized = gender.trim().toLowerCase();
-    console.log("chegou na função de normalizar gênero", normalized);
-
     return mapGender[normalized];
   },
 
@@ -176,7 +177,7 @@ export const importService = {
           companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
           positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
           meritalStatus: data['estado civil'],
-          gender: data.genero,
+          gender: importService.normalizeGender(data.genero),
           position: data.cargo,
           sector: data.setor,
           scholarship: data.escolaridade ? data.escolaridade : null,
