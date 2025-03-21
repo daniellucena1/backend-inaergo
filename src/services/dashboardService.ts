@@ -46,6 +46,8 @@ export const dashboardService = {
       }
     });
 
+    console.log(employees);
+
     const allEmployes = await prisma.employee.findMany();
 
     const uniqueSectors = [...new Set(allEmployes.map(employee => employee.sector))];

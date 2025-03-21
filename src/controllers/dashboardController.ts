@@ -22,6 +22,8 @@ export const dashboardController = {
         throw new Error("Manager não encontrado")
       }
 
+      console.log(managerId, sector, baseAge, ceilAge);
+
       const dashboardInfo = await dashboardService.getDashboardInfo(Number(managerId), sector, baseAge, ceilAge, gender, baseCompanyTime, ceilCompanyTime);
 
       res.json(dashboardInfo)
