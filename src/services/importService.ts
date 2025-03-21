@@ -5,14 +5,34 @@ import { Employee } from '@prisma/client';
 // import bcrypt from 'bcryptjs';
 import xlsx from 'xlsx';
 import { DataExcel } from '../types/dataExcel';
+import { BadRequest } from '../@errors/BadRequest';
+import { NotFound } from '../@errors/NotFound';
+import { Forbidden } from '../@errors/Forbidden';
 
 // Se tornar uma rota só / importar tanto csv quando excel
 // mecanismo de resposta (id da questão / resposta de um usuário)
 
 export const importService = {
+  normalizeGender: (gender: string) => {
+    
+    const mapGender: Record<string, string> = {
+      "masculino": "M",
+      "feminino": "F",
+      "m": "M",
+      "f": "F",
+      "nao informado": "NI",
+      "ni": "NI",
+      "": "NI"
+    }
+    const normalized = gender.trim().toLowerCase();
+    console.log("chegou na função de normalizar gênero", normalized);
+
+    return mapGender[normalized];
+  },
+
   importFile: async(path: string, managerId: number, fileType: string) => {
     if (!path) {
-      throw new Error('Nenhum arquivo enviado');
+      throw new BadRequest('Nenhum arquivo enviado');
     }
 
     const manager = await prisma.user.findUnique({
@@ -20,11 +40,11 @@ export const importService = {
     })
 
     if (!manager) {
-      throw new Error('Gerente não encontrado');
+      throw new NotFound('Gerente não encontrado');
     }
 
     if (manager.companyId === null) {
-      throw new Error('Usuário não é um gerente');
+      throw new Forbidden('Usuário não é um gerente');
     }
 
     const companyId = manager?.companyId;
@@ -53,7 +73,7 @@ export const importService = {
         .pipe(csvParser())
         .on('data', (data: DataExcel) => {
           if (!data.matricula) {
-            throw new Error('Matrícula não encontrada no CSV');
+            throw new NotFound('Matrícula não encontrada no CSV');
           }
 
           const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
@@ -63,7 +83,7 @@ export const importService = {
             companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
             positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
             meritalStatus: data['estado civil'],
-            gender: data.genero ? data.genero : "Não informado",
+            gender: importService.normalizeGender(data.genero),
             position: data.cargo,
             sector: data.setor,
             scholarship: data.escolaridade ? data.escolaridade : null,
@@ -135,6 +155,7 @@ export const importService = {
   importFromExcel: async (path: string, companyId: number) => {
     
     let employees: Employee[] = [];
+    let response = {};
 
     const results: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission">[] = [];
 
@@ -145,7 +166,7 @@ export const importService = {
       const temp = xlsx.utils.sheet_to_json<DataExcel>(excel.Sheets[excel.SheetNames[i]]);
       temp.forEach((data) => {
         if (!data.matricula) {
-          throw new Error('Matrícula não encontrada no Excel');
+          throw new NotFound('Matrícula não encontrada no Excel');
         }
 
         const newData: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission"> = {
@@ -182,12 +203,35 @@ export const importService = {
       });
     }
 
-    return {
+    for (const employee of duplicateEmployees) {
+      const dataBaseEmployee = await prisma.employee.findUnique({
+        where: {
+          registration: employee.registration
+        }
+      });
+      await prisma.employee.updateMany({
+        where: {
+          registration: employee.registration
+        },
+        data: {
+          name: employee.name === dataBaseEmployee?.name ? dataBaseEmployee.name : employee.name,
+          age: employee.age === dataBaseEmployee?.age ? dataBaseEmployee.age : employee.age,
+          companyTime: employee.companyTime === dataBaseEmployee?.companyTime ? dataBaseEmployee.companyTime : employee.companyTime,
+          positionTime: employee.positionTime === dataBaseEmployee?.positionTime ? dataBaseEmployee.positionTime : employee.positionTime,
+          meritalStatus: employee.meritalStatus === dataBaseEmployee?.meritalStatus ? dataBaseEmployee.meritalStatus : employee.meritalStatus,
+        }
+      });
+    }
+
+    response = {
       employees,
       inserted: newEmployees.length,
-      duplicated: duplicateEmployees.length,
-      duplicateUsers: duplicateEmployees,
-      message: duplicateEmployees.length > 0 ? `Foram ignorados ${duplicateEmployees.length} registros duplicados` : "Todos os registros foram inseridos com sucesso"
-    }
+      updated: duplicateEmployees.length,
+      updatedUsers: duplicateEmployees,
+      message: duplicateEmployees.length > 0 ? `Foram atualizados ${duplicateEmployees.length} registros` : "Todos os registros foram inseridos com sucesso"
+    };
+
+    return response;
   },
+
 }

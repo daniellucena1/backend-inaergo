@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { employeeService } from "../services/employeeService";
 import { z } from "zod";
 
@@ -35,7 +35,7 @@ export const employeeController = {
   //   }
   // },
 
-  async updateEmployee(req: Request, res: Response) {
+  async updateEmployee(req: Request, res: Response, next: NextFunction) {
     try {
 
       const schemaBody = z.object({
@@ -65,15 +65,11 @@ export const employeeController = {
 
       res.json(e);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(404).json({ error: error.message });
-      }
-
-      res.status(500).json({ error: 'Erro ao atualizar usuário' });
+      next(error);
     }
   },
 
-  getAllEmloyees: async (req: Request, res: Response) => {
+  getAllEmloyees: async (req: Request, res: Response, next: NextFunction) => {
     try {
 
       const managerId = req.user?.id;
@@ -86,15 +82,11 @@ export const employeeController = {
 
       res.json(employees);
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(404).json({
-          error: error.message,
-        });
-      }
+      next(error);
     }
   },
 
-  async deleteEmployee(req: Request, res: Response) {
+  async deleteEmployee(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
@@ -104,15 +96,7 @@ export const employeeController = {
         message: "Usuario deletado com sucesso",
       });
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(404).json({
-          error: error.message,
-        });
-      }
-
-      res.status(500).json({
-        error: "Erro ao deletar usuário",
-      });
+      next(error);
     }
   }
 }

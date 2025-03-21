@@ -1,3 +1,4 @@
+import { NotFound } from "../@errors/NotFound";
 import { FormsDTO } from "../types/formsDTO"
 import { FormsResponse } from "../types/formsResponse";
 import prisma from "./prisma";
@@ -54,7 +55,7 @@ export const formsService = {
         const form = await prisma.form.findFirst({});
 
         if (!form) {
-            throw new Error('Formulário não encontrado');
+            throw new NotFound('Formulário não encontrado');
         }
 
         const pages = await prisma.page.findMany({

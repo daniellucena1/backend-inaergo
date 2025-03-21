@@ -1,3 +1,4 @@
+import { Forbidden } from "../@errors/Forbidden";
 import prisma from "./prisma"
 
 // 5 funcionarios 2 - 5 risco alto
@@ -23,7 +24,7 @@ export const dashboardService = {
     });
 
     if (manager?.companyId === null) {
-      throw new Error('Usuário não é um gerente');
+      throw new Forbidden('Usuário não é um gerente');
     }
 
     const employees = await prisma.employee.findMany({
@@ -44,6 +45,8 @@ export const dashboardService = {
         Answer: true
       }
     });
+
+    console.log(employees);
 
     const allEmployes = await prisma.employee.findMany();
 

@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 // import { Employee } from '@prisma/client';
 import { importService } from '../services/importService';
 
 export const importController = {
 
-  importFile: async (req: Request, res: Response) => {
+  importFile: async (req: Request, res: Response, next: NextFunction) => {
     const path = req.file?.path;
 
     if (!req.user) {
@@ -32,9 +32,7 @@ export const importController = {
       res.status(201).json({results});
     } catch (error) {
       fs.unlink(path, () => {});
-      return res.status(500).json({
-        error: error instanceof Error? error.message : 'Erro desconhecido'
-      });
+      next(error);
     }
   },
 
