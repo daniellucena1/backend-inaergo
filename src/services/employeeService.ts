@@ -91,6 +91,9 @@ export const employeeService = {
     const employees = await prisma.employee.findMany({
       where: {
         companyId: manager.companyId
+      },
+      include: {
+        Answer: true
       }
     });
 
@@ -98,7 +101,12 @@ export const employeeService = {
       throw new NotFound('Nenhum usuário encontrado');
     }
 
-    return employees;
+    const response = employees.map(({Answer, ...employee}) => ({
+      ...employee,
+      answered: Answer.length > 0
+    }));
+
+    return response;
   },
 
   deleteEmployee: async (id: number) => {
