@@ -135,6 +135,7 @@ export const importService = {
   importFromExcel: async (path: string, companyId: number) => {
     
     let employees: Employee[] = [];
+    let response = {};
 
     const results: Omit<Employee, "id" | "createdAt" | "updatedAt" | "permission">[] = [];
 
@@ -182,12 +183,35 @@ export const importService = {
       });
     }
 
-    return {
+    for (const employee of duplicateEmployees) {
+      const dataBaseEmployee = await prisma.employee.findUnique({
+        where: {
+          registration: employee.registration
+        }
+      });
+      await prisma.employee.updateMany({
+        where: {
+          registration: employee.registration
+        },
+        data: {
+          name: employee.name === dataBaseEmployee?.name ? dataBaseEmployee.name : employee.name,
+          age: employee.age === dataBaseEmployee?.age ? dataBaseEmployee.age : employee.age,
+          companyTime: employee.companyTime === dataBaseEmployee?.companyTime ? dataBaseEmployee.companyTime : employee.companyTime,
+          positionTime: employee.positionTime === dataBaseEmployee?.positionTime ? dataBaseEmployee.positionTime : employee.positionTime,
+          meritalStatus: employee.meritalStatus === dataBaseEmployee?.meritalStatus ? dataBaseEmployee.meritalStatus : employee.meritalStatus,
+        }
+      });
+    }
+
+    response = {
       employees,
       inserted: newEmployees.length,
-      duplicated: duplicateEmployees.length,
-      duplicateUsers: duplicateEmployees,
-      message: duplicateEmployees.length > 0 ? `Foram ignorados ${duplicateEmployees.length} registros duplicados` : "Todos os registros foram inseridos com sucesso"
-    }
+      updated: duplicateEmployees.length,
+      updatedUsers: duplicateEmployees,
+      message: duplicateEmployees.length > 0 ? `Foram atualizados ${duplicateEmployees.length} registros` : "Todos os registros foram inseridos com sucesso"
+    };
+
+    return response;
   },
+
 }
