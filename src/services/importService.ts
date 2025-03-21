@@ -14,23 +14,18 @@ import { Forbidden } from '../@errors/Forbidden';
 
 export const importService = {
   normalizeGender: (gender: string) => {
+    
     const mapGender: Record<string, string> = {
       "masculino": "M",
       "feminino": "F",
-      "não informado": "NI",
-      "MASCULINO": "M",
-      "FEMININO": "F",
-      "NÃO INFORMADO": "NI",
-      "Masculino": "M",
-      "Feminino": "F",
-      "Não informado": "NI",
-      "M": "M",
-      "F": "F",
-      "NI": "NI",
+      "m": "M",
+      "f": "F",
+      "nao informado": "NI",
+      "ni": "NI",
       "": "NI"
     }
-
     const normalized = gender.trim().toLowerCase();
+    console.log("chegou na função de normalizar gênero", normalized);
 
     return mapGender[normalized];
   },
