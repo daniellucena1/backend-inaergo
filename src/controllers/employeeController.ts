@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { employeeService } from "../services/employeeService";
 import { z } from "zod";
+import { NotFound } from "../@errors/NotFound";
+import { Unauthorized } from "../@errors/Unauthorized";
 
 export const employeeController = {
   // async createEmployee(req: Request, res: Response) {
@@ -49,19 +51,23 @@ export const employeeController = {
         position: z.string().optional(),
         companyTime: z.number().optional(),
         positionTime: z.number().optional(),
-        healthProblemaLastYear: z.string().optional(),
-        companyId: z.number().optional()
       });
 
-      const { name, email, age, gender, scholarship, meritalStatus, sector, position, companyTime, positionTime, healthProblemaLastYear, companyId } = schemaBody.parse(req.body);
+      const { name, email, age, gender, scholarship, meritalStatus, sector, position, companyTime, positionTime} = schemaBody.parse(req.body);
 
       const registration = req.params.registration;
 
-      if ( !registration ) {
-        throw new Error("Matrícula do funcionário é obrigatória");
+      const managerId = req.user?.id;
+
+      if (!managerId) {
+        throw new NotFound("Administrador não encontrado")
       }
 
-      const e = await employeeService.updateEmployee(registration, name, email, age, gender, scholarship, meritalStatus, sector, position, companyTime, positionTime, healthProblemaLastYear, companyId);
+      if ( !registration ) {
+        throw new Unauthorized("Matrícula do funcionário é obrigatória");
+      }
+
+      const e = await employeeService.updateEmployee(registration,managerId, name, email, age, gender, scholarship, meritalStatus, sector, position, companyTime, positionTime);
 
       res.json(e);
     } catch (error) {

@@ -36,11 +36,26 @@ export const employeeService = {
   //   return employee;
   // },
 
-  updateEmployee: async (registration: string, name?: string, email?: string, age?: number, gender?: string, scholarship?: string, meritalStatus?: string, sector?: string, position?: string, companyTime?: number, positionTime?: number, healthProblemLastYear?: string, companyId?: number) => {
+  updateEmployee: async (registration: string, managerId: number, name?: string, email?: string, age?: number, gender?: string, scholarship?: string, meritalStatus?: string, sector?: string, position?: string, companyTime?: number, positionTime?: number) => {
+
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId,
+      }
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não encontrado")
+    }
+
+    const companyId = manager.companyId
 
     const employee = await prisma.employee.findUnique({
       where: {
-        registration
+        registrationCompanyId: {
+          registration: registration,
+          companyId: companyId as number
+        }
       }
     });
 
@@ -49,7 +64,12 @@ export const employeeService = {
     }
 
     const updatedEmployee = await prisma.employee.update({
-      where: { registration: registration },
+      where: { 
+        registrationCompanyId: {
+          registration: registration,
+          companyId: companyId as number
+        } 
+      },
       data: {
         name: name !== "" ? name : employee.name,
         registration: registration !== "" ? registration : employee.registration,
@@ -61,7 +81,6 @@ export const employeeService = {
         position: position !== "" ? position : employee.position, 
         companyTime: companyTime ? companyTime : employee.companyTime, 
         positionTime: positionTime ? positionTime : employee.positionTime, 
-        companyId: companyId ? companyId : employee.companyId
       },
     });
 

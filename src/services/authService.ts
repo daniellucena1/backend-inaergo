@@ -23,9 +23,15 @@ export const authService = {
     return authService.handleLogin(user, password);
   },
 
-  loginFuncionario: async (registration: string) => {
+  loginFuncionario: async (registration: string, companyId: number) => {
     const user = await prisma.employee.findUnique({
-      where: { registration: registration }, include: {
+      where: { 
+        registrationCompanyId: {
+          registration,
+          companyId
+        }
+      }, 
+      include: {
         Answer: true
       }
     });
@@ -38,7 +44,7 @@ export const authService = {
       throw new Forbidden("Funcionário já respondeu a pesquisa");
     }
 
-    return authService.handleLoginEmployee(user, registration);
+    return authService.handleLoginEmployee(user, registration, companyId);
   },
 
   handleLogin: async (user: User, password: string) => {
@@ -63,7 +69,7 @@ export const authService = {
     return { token, user: { ...user, password: undefined } };
   },
 
-  handleLoginEmployee: async (user: Employee, registration: string) => {
+  handleLoginEmployee: async (user: Employee, registration: string, companyId: number) => {
     const validRegistration = user.registration.trim() === registration.trim();
 
     if (!validRegistration) {
@@ -74,7 +80,8 @@ export const authService = {
       {
         id: user.id,
         registration: user.registration,
-        isAdmin: false
+        isAdmin: false,
+        companyId: companyId
       },
       JWT_SECRET,
       {

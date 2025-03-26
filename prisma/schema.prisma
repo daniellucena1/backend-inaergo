@@ -38,18 +38,20 @@ model Employee {
   age                   Int
   gender                String?
   scholarship           String?
-  meritalStatus         String
+  meritalStatus         String  
   sector                String
   position              String
   companyTime           Int
   positionTime          Int?
-  registration          String   @unique
+  registration          String
   permission            Boolean  @default(false)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @default(now())
   companyId             Int
   Company               Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   Answer                Answer[]
+
+  @@unique(name: "registrationCompanyId", [registration, companyId])
 }
 
 model Form {

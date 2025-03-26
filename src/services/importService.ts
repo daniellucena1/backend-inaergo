@@ -13,7 +13,10 @@ import { Forbidden } from '../@errors/Forbidden';
 // mecanismo de resposta (id da questão / resposta de um usuário)
 
 export const importService = {
-  normalizeGender: (gender: string) => {
+  normalizeGender: (gender: string | null) => {
+    if (!gender) {
+      return "NI";
+    }
     
     const mapGender: Record<string, string> = {
       "masculino": "M",
@@ -21,11 +24,9 @@ export const importService = {
       "m": "M",
       "f": "F",
       "nao informado": "NI",
-      "ni": "NI",
-      "": "NI"
+      "ni": "NI"
     }
     const normalized = gender.trim().toLowerCase();
-    console.log("chegou na função de normalizar gênero", normalized);
 
     return mapGender[normalized];
   },
@@ -114,7 +115,10 @@ export const importService = {
             for ( const employee of duplicateEmployees ) {
               const dataBaseEmployee = await prisma.employee.findUnique({
                 where: {
-                  registration: employee.registration
+                  registrationCompanyId: {
+                    registration: employee.registration,
+                    companyId: employee.companyId
+                  }
                 }
               });
               await prisma.employee.updateMany({
@@ -176,7 +180,7 @@ export const importService = {
           companyTime: parseInt(data['tempo empresa'] as unknown as string, 10),
           positionTime: parseInt(data['tempo posicao'] as unknown as string, 10),
           meritalStatus: data['estado civil'],
-          gender: data.genero,
+          gender: importService.normalizeGender(data.genero),
           position: data.cargo,
           sector: data.setor,
           scholarship: data.escolaridade ? data.escolaridade : null,
@@ -188,10 +192,15 @@ export const importService = {
     }
 
     const existingEmployees = await prisma.employee.findMany({
-      select: { registration: true }
+      select: { 
+        registrationCompanyId: {
+          registration: true,
+          companyId: true
+        } 
+      }
     });
 
-    const existingRegistrations = existingEmployees.map((employee) => employee.registration);
+    const existingRegistrations = existingEmployees.map((employee) => employee.registrationCompanyId);
 
     const newEmployees = results.filter((employee) => !existingRegistrations.includes(employee.registration));
     const duplicateEmployees = results.filter((employee) => existingRegistrations.includes(employee.registration));
@@ -203,15 +212,24 @@ export const importService = {
       });
     }
 
+    console.log(duplicateEmployees)
+
     for (const employee of duplicateEmployees) {
       const dataBaseEmployee = await prisma.employee.findUnique({
         where: {
-          registration: employee.registration
+          registrationCompanyId: {
+            registration: employee.registration,
+            companyId: employee.companyId
+          }
         }
       });
-      await prisma.employee.updateMany({
+      
+      const employeeUpdate = await prisma.employee.update({
         where: {
-          registration: employee.registration
+          registrationCompanyId: {
+            registration: employee.registration,
+            companyId: employee.companyId
+          }
         },
         data: {
           name: employee.name === dataBaseEmployee?.name ? dataBaseEmployee.name : employee.name,
@@ -221,6 +239,8 @@ export const importService = {
           meritalStatus: employee.meritalStatus === dataBaseEmployee?.meritalStatus ? dataBaseEmployee.meritalStatus : employee.meritalStatus,
         }
       });
+
+      console.log(employeeUpdate)
     }
 
     response = {
