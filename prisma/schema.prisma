@@ -33,23 +33,23 @@ enum UserType {
 }
 
 model Employee {
-  id                    Int      @id @default(autoincrement())
-  name                  String
-  age                   Int
-  gender                String?
-  scholarship           String?
-  meritalStatus         String
-  sector                String
-  position              String
-  companyTime           Int
-  positionTime          Int?
-  registration          String   @unique
-  permission            Boolean  @default(false)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @default(now())
-  companyId             Int
-  Company               Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  Answer                Answer[]
+  id            Int      @id @default(autoincrement())
+  name          String
+  age           Int
+  gender        String?
+  scholarship   String?
+  meritalStatus String
+  sector        String
+  position      String
+  companyTime   Int
+  positionTime  Int?
+  registration  String   @unique
+  permission    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  companyId     Int
+  Company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Answer        Answer[]
 }
 
 model Form {
@@ -57,6 +57,21 @@ model Form {
   title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  Review    Review?
+  Page      Page[]
+}
+
+model Review {
+  id            Int      @id @default(autoincrement())
+  companyId     Int
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title         String
+  openingDate   DateTime
+  finishingDate DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  formId        Int      @unique
+  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
 }
 
 model Page {
@@ -64,6 +79,7 @@ model Page {
   number Int
   title  String
   formId Int
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   Question Question[]
 }
@@ -105,4 +121,5 @@ model Company {
 
   employee Employee[]
   User     User[]
+  Review   Review[]
 }
