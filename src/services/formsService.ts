@@ -52,7 +52,25 @@ export const formsService = {
     },
 
     getForm: async () => {
-        const form = await prisma.form.findFirst({});
+        const now = new Date();
+        const review = await prisma.review.findFirst({
+            where: {
+                AND: [
+                  { openingDate: { lte: now } },
+                  { finishingDate: { gte: now } }
+                ]
+              }
+        });
+
+        if (!review) {
+            throw new NotFound("Nenhuma avaliação aberta no momento");
+        }
+
+        const form = await prisma.form.findUnique({
+            where: {
+                id: review?.formId
+            }
+        });
 
         if (!form) {
             throw new NotFound('Formulário não encontrado');

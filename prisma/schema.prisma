@@ -66,10 +66,10 @@ model Review {
   companyId     Int
   company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   title         String
-  openingDate   DateTime
-  finishingDate DateTime
+  openingDate   DateTime @unique
+  finishingDate DateTime @unique
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   formId        Int      @unique
   form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
 }
