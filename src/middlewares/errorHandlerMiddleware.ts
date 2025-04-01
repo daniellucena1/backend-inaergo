@@ -4,6 +4,7 @@ import { HttpStatusCode } from '../types/HttpStatusCode';
 import { z } from 'zod';
 
 export const errorHandlerMiddleware = (err: unknown, req: Request, res: Response, _next: NextFunction) => {
+  console.error(err)
   if (err instanceof BaseError) {
     return res.status(err.httpCode).json({
       status: err.httpCode,

@@ -1,7 +1,5 @@
-import { BadRequest } from '../@errors/BadRequest';
 import { NotFound } from '../@errors/NotFound';
 import prisma from '../services/prisma';
-import { FormsDTO } from '../types/formsDTO';
 
 export const reviewService = {
   getReviewsByCompanyId: async (companyId: number) => {
@@ -11,7 +9,6 @@ export const reviewService = {
       },
       select: {
         updatedAt: true,
-        formId: true,
         companyId: true,
         id: true,
         title: true,
@@ -42,7 +39,6 @@ export const reviewService = {
           finishingDate: review.finishingDate,
           createdAt: review.createdAt,
           updatedAt: review.updatedAt,
-          formId: review.formId
         };
       })
     );
@@ -53,44 +49,45 @@ export const reviewService = {
     };
   },
 
-  createReview: async (title: string, openingDate: Date, finishingDate: Date, { forms }: FormsDTO, managerId: number) => {
-    const createdForm = await prisma.form.create({
-      data:{
-        title: forms.title
-      }
-    });
-
-    if (!createdForm) {
-      throw new BadRequest("Avaliação não pode ser criada");
-    }
-
-    const createdPages = await Promise.all(forms.pages.map((form) => {
-      return prisma.page.create({
-        data: {
-          formId: createdForm.id,
-          number: form.page,
-          title: form.title,
-          Question: {
-            create: form.fields.map((field) => ({
-              text: field.question,
-              type: field.type
-            }))
-          }
-        },
-        select: {
-          id: true,
-          Question: true,
-          title: true,
-          number: true
-        }
-      })
-    }));
+  createReview: async (title: string, openingDate: Date, finishingDate: Date, managerId: number) => {
+    // const createdForm = await prisma.form.findFirst({
+    //   include: {
+    //     Page: {
+    //       include: {
+    //         Question: true
+    //       }
+    //     }
+    //   }
+    // });
+    
+    // if (!createdForm) {
+    //   throw new BadRequest("Avaliação não pode ser criada");
+    // }  
+    
+    // const newForm = await prisma.form.create({
+    //   data: {
+    //     title: title,
+    //     Page: {
+    //       create: createdForm.Page.map(page => ({
+    //         number: page.number,
+    //         title: page.title,
+    //         Question: {
+    //           create: page.Question.map(q => ({
+    //             text: q.text,
+    //             type: q.type
+    //           }))
+    //         }
+    //       }))
+    //     }
+    //   }
+    // });
 
     const manager = await prisma.user.findUnique({
       where: {
         id: managerId
       }
     });
+    
     if (!manager) {
       throw new NotFound("Gestor não encontrado");
     }
@@ -105,27 +102,43 @@ export const reviewService = {
         companyId: manager.companyId,
         openingDate,
         finishingDate,
-        formId: createdForm.id
       }
     });
 
     return {
       companyId: manager.companyId,
       Review: createdReview,
-      forms: {
-        id: createdForm.id,
-        title: createdForm.title,
-        pages: createdPages.map((page) => ({
-            id: page.id,
-            page: page.number,
-            title: page.title,
-            fields: page.Question.map((question) => ({
-                id: question.id,
-                question: question.text,
-                type: question.type,
-            }))
-        }))
+    }
+  },
+
+  reopenReview: async (reviewId: number, newOpeningDate: Date, newFinishingDate: Date, managerId: number) => {
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
       }
-    };
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não econtrado");
+    }
+
+    const review = await prisma.review.update({
+      where: {
+        id: reviewId,
+        AND: [
+          { finishingDate : { gte: newOpeningDate }}
+        ]
+      },
+      data: {
+        openingDate: newOpeningDate,
+        finishingDate: newFinishingDate
+      }
+    });
+
+    if (!review) {
+      throw new NotFound("Avaliação já está aberta ou não existe");
+    }
+
+    return review;
   }
 } 
