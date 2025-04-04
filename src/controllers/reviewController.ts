@@ -8,13 +8,13 @@ import { InternalServerError } from "../@errors/InternalServerError";
 export const reviewController = {
   getReviewsByCompanyId: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const companyId = req.user?.companyId;
+      const managerId = req.user?.id;
 
-      if (!companyId) {
-        throw new BadRequest("Gestor não possui o id da empresa")
+      if (!managerId) {
+        throw new BadRequest("Gestor não encontrado")
       }
 
-      const data = await reviewService.getReviewsByCompanyId(companyId);  
+      const data = await reviewService.getReviewsByCompanyId(managerId);  
 
       if (!data) {
         throw new BadRequest("Avaliação não encontrada");
