@@ -93,9 +93,16 @@ model Question {
   text   String
   type   Type
   pageId Int
+  profile Profile 
 
   page   Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
   Answer Answer[]
+}
+
+enum Profile {
+  COLLECTIVIST
+  INDIVIDUALIST
+  NORMAL
 }
 
 model Answer {

@@ -1,3 +1,4 @@
+import { Answer, Prisma, Profile, Review } from "@prisma/client";
 import { Forbidden } from "../@errors/Forbidden";
 import { NotFound } from "../@errors/NotFound";
 import prisma from "./prisma"
@@ -17,6 +18,95 @@ import prisma from "./prisma"
 // 3.7 - 5 Risco Baixo
 
 export const dashboardService = {
+
+  getNivel: (value: number) => {
+    if (value >= 1 && value <= 2.29) return "baixo";
+    if (value >= 2.3 && value <= 3.69) return "medio";
+    if (value >= 3.7 && value <= 5) return "alto";
+    return null;
+  },
+
+  calculateResponse: (answers: Answer[], pageNumber: number) => {
+    let alto = 0, medio = 0, baixo = 0;
+
+    answers.forEach((a) => {
+
+      if (pageNumber === 1) {
+        if (a.value >= 1 && a.value <= 2.29) {
+          alto += 1;
+        } else if (a.value >= 2.3 && a.value <= 3.69) {
+          medio += 1;
+        } else if (a.value >= 3.7 && a.value <= 5) {
+          baixo += 1;
+        }
+      } else {
+        if (a.value >= 1 && a.value <= 2.29) {
+          baixo += 1;
+        } else if (a.value >= 2.3 && a.value <= 3.69) {
+          medio += 1;
+        } else if (a.value >= 3.7 && a.value <= 5) {
+          alto += 1;
+        }
+      }
+    });
+
+    const total = alto + medio + baixo;
+
+    return {
+      alto,
+      medio,
+      baixo,
+      total,
+      percent: {
+        alto: total ? Number(((alto / total) * 100).toFixed(2)) : 0,
+        medio: total ? Number(((medio / total) * 100).toFixed(2)) : 0,
+        baixo: total ? Number(((baixo / total) * 100).toFixed(2)) : 0,
+      }
+    };
+  },
+
+  generateGraficData: (percentages: { alto: number, medio: number, baixo: number }, labels: [string, string, string]) => {
+    return {
+      0: { value: percentages.alto, label: labels[0] },
+      1: { value: percentages.medio, label: labels[1] },
+      2: { value: percentages.baixo, label: labels[2] }
+    };
+  },
+
+  processQuestions: (questions: Prisma.QuestionGetPayload<{ include: { Answer: true } }>[], employees: Prisma.EmployeeGetPayload<{ include: { Answer: true } }>[], review: Review, labels: [string, string, string], pageNumber: number) => {
+
+    let totalAlto = 0, totalMedio = 0, totalBaixo = 0, totalGeral = 0;
+
+    const result = questions.map(q => {
+      const allAnswers = employees.flatMap(e => e.Answer.filter(a => a.questionId === q.id && a.reviewId === review.id));
+
+      const { alto, medio, baixo, total,  percent } = dashboardService.calculateResponse(allAnswers, pageNumber);
+
+      totalAlto += alto;
+      totalMedio += medio;
+      totalBaixo += baixo;
+      totalGeral += total;
+
+      return {
+        questionId: q.id,
+        question: q.text,
+        type: q.type,
+        data: dashboardService.generateGraficData(percent, labels)
+      };
+    });
+
+    const allData = dashboardService.generateGraficData({
+      alto: totalGeral ? Number(((totalAlto / totalGeral) * 100).toFixed(2)) : 0,
+      medio: totalGeral ? Number(((totalMedio / totalGeral) * 100).toFixed(2)) : 0,
+      baixo: totalGeral ? Number(((totalBaixo / totalGeral) * 100).toFixed(2)) : 0
+    },
+      labels
+    );
+
+    return { result, allData };
+    
+  },
+  
   getDashboardInfo: async (managerId: number, reviewId?: number,sector?: string, baseAge?: number, ceilAge?: number, gender?: string, baseCompanyTime?: number, ceilCompanyTime?: number) => {
     const manager = await prisma.user.findUnique({
       where: {
@@ -47,8 +137,6 @@ export const dashboardService = {
         }
       });
     }
-
-    console.log(review)
 
     if (!review) {
       throw new NotFound("Avalição não encontrada");
@@ -83,84 +171,97 @@ export const dashboardService = {
 
     const pages = await prisma.page.findMany({
       include: {
-        Question: true
+        Question: {
+          include: {
+            Answer: true
+          }
+        }
       }
     });
 
-    const response = pages.map((p) => {
-      let altoPagina = 0;
-      let medioPagina = 0;
-      let baixoPagina = 0;
-      let totalPagina = 0;
-
+    const response = await Promise.all(pages.map(async (p) => {
+      if (p.number === 2) {
+        return await dashboardService.getInfoPageEEG(p, employees, review);
+      }
+    
+      if (p.number === 1) {
+        return await dashboardService.getInfoPageEOT(p, employees, review);
+      }
+    
+      const { result, allData } = dashboardService.processQuestions(
+        p.Question,
+        employees,
+        review,
+        ["Risco Alto", "Risco Médio", "Risco Baixo"],
+        p.number
+      );
+    
       return {
         title: p.title,
         number: p.number,
-        questions: p.Question.map((q) => {
-          let alto = 0;
-          let medio = 0;
-          let baixo = 0;
-          employees.map((e) => {
-            const answers = e.Answer.filter(a => (a.questionId === q.id && a.reviewId === review.id))
-
-            answers.map((a) => {
-              if (a.value >= 1 && a.value <= 2.29) {
-                alto += 1;
-              } else if (a.value >= 2.3 && a.value <= 3.69) {
-                medio += 1;
-              } else if (a.value >= 3.7 && a.value <= 5) {
-                baixo += 1;
-              }
-            })
-          });
-
-          const total = alto + medio + baixo;
-
-          altoPagina += alto;
-          medioPagina += medio;
-          baixoPagina += baixo;
-          totalPagina += total
-
-          return {
-            questionId: q.id,
-            question: q.text,
-            type: q.type,
-            data: {
-              0: {
-                value: Number(((alto / total) * 100).toFixed(2)),
-                label: "Risco Alto"
-              },
-              1: {
-                value: Number(((medio / total) * 100).toFixed(2)),
-                label: "Risco Médio"
-              },
-              2: {
-                value: Number(((baixo / total) * 100).toFixed(2)),
-                label: "Risco Baixo"
-              },
-            }
-          }
-        }),
-        data: {
-          0: {
-            value: Number(((altoPagina / totalPagina) * 100).toFixed(2)),
-            label: "Risco Alto"
-          },
-          1: {
-            value: Number(((medioPagina / totalPagina) * 100).toFixed(2)),
-            label: "Risco Médio"
-          },
-          2: {
-            value: Number(((baixoPagina / totalPagina) * 100).toFixed(2)),
-            label: "Risco Baixo"
-          },
-        }
-      }
-    })
+        questions: result,
+        data: allData
+      };
+    }))
 
     return {
       pages: response,
       sectors: uniqueSectors
     };
-  }
+  },
+
+  getInfoPageEEG: async (page: Prisma.PageGetPayload<{ include: { Question: { include: { Answer: true }} } }>, employees: Prisma.EmployeeGetPayload<{ include: { Answer: true }}>[], review: Review) => {
+
+    const individualistQuestions = page.Question.filter(q => q.profile === Profile.INDIVIDUALIST);
+    const collectivistQuestions = page.Question.filter(q => q.profile === Profile.COLLECTIVIST);
+
+    const individualistProcessado = dashboardService.processQuestions(
+      individualistQuestions,
+      employees,
+      review,
+      ["Predominante", "Presença Moderada", "Pouco Característico"],
+      page.number
+    );
+
+    const collectivistProcessado = dashboardService.processQuestions(
+      collectivistQuestions,
+      employees,
+      review,
+      ["Predominante", "Presença Moderada", "Pouco Característico"],
+      page.number
+    );
+
+    return {
+      title: page.title,
+      number: page.number,
+      individualist: {
+        questions: individualistProcessado.result,
+        data: individualistProcessado.allData
+      },
+      collectivist: {
+        questions: collectivistProcessado.result,
+        data: collectivistProcessado.allData
+      }
+    };
+  },
+
+  getInfoPageEOT: async (page: Prisma.PageGetPayload<{ include: { Question: { include: { Answer: true } } } }>, employees: Prisma.EmployeeGetPayload<{ include: { Answer: true }}>[], review: Review) => {
+
+    const { result, allData } = dashboardService.processQuestions(
+      page.Question,
+      employees,
+      review,
+      ["Risco Alto", "Risco Médio", "Risco Baixo"],
+      page.number
+    );
+
+    return {
+      title: page.title,
+      number: page.number,
+      questions: result,
+      data: allData
+    };
+  },
+
+  
 }
