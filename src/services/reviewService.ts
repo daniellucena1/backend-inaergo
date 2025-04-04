@@ -2,10 +2,26 @@ import { NotFound } from '../@errors/NotFound';
 import prisma from '../services/prisma';
 
 export const reviewService = {
-  getReviewsByCompanyId: async (companyId: number) => {
+  getReviewsByCompanyId: async (managerId: number) => {
+
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
+      }
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não encontrado");
+    }
+
+    if (!manager.companyId) {
+      throw new NotFound("Identificador da empresa não encontrado");
+    }
+
     const reviews = await prisma.review.findMany({
       where: {
-          companyId
+          companyId: manager.companyId,
+          
       },
       select: {
         updatedAt: true,
@@ -28,6 +44,8 @@ export const reviewService = {
           where: { companyId: review.companyId, type: "MANAGER" },
         });
 
+        console.log("manager", manager);
+
         if (!manager) {
           throw new NotFound("Gestor não encontrado");
         }
@@ -44,7 +62,7 @@ export const reviewService = {
     );
 
     return {
-      companyId,
+      companyId: manager.companyId,
       reviews: formattedReviews
     };
   },
