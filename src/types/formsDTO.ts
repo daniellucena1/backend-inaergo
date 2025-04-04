@@ -7,6 +7,7 @@ export type FormsDTO = {
             fields: {
                 type: "TEXT" | "RATING" | "CHECKBOX";
                 question: string;
+                profile: "NORMAL" | "COLLECTIVIST" | "INDIVIDUALIST";
             }[];
         }[];
     };

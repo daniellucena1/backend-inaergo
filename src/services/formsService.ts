@@ -21,6 +21,7 @@ export const formsService = {
                         create: form.fields.map((field) => ({
                             text: field.question,
                             type: field.type,
+                            profile: field.profile
                         }))
                     }
                 },

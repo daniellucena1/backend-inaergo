@@ -14,7 +14,8 @@ export const formsController = {
                         title: z.string(),
                         fields: z.array(z.object({
                             type: z.enum(["TEXT", "RATING", "CHECKBOX"]),
-                            question: z.string()
+                            question: z.string(),
+                            profile: z.enum(["NORMAL", "COLLECTIVIST", "INDIVIDUALIST"])
                         }))
                     }))
                 })
