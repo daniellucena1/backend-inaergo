@@ -19,7 +19,8 @@ async function main() {
       title: string,
       fields: {
         type: "TEXT" | "RATING" | "CHECKBOX",
-        question: string
+        question: string,
+        profile: "COLLECTIVIST" | "INDIVIDUALIST" | "NORMAL"
       }[]
     }[]
   } = {
@@ -31,79 +32,98 @@ async function main() {
         "fields": [
           {
             "type": "RATING",
-            "question": "O número de trabalhadores é suficiente para a execução das tarefas?"
+            "question": "O número de trabalhadores é suficiente para a execução das tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Os recursos de trabalho são em número suficiente para a realização das tarefas?"
+            "question": "Os recursos de trabalho são em número suficiente para a realização das tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "O espaço físico disponível para a realização do trabalho é adequado?"
+            "question": "O espaço físico disponível para a realização do trabalho é adequado?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Os equipamentos são adequados para a realização das tarefas?"
+            "question": "Os equipamentos são adequados para a realização das tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "O ritmo de trabalho é adequado?"
+            "question": "O ritmo de trabalho é adequado?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Os prazos para a realização das tarefas são flexíveis?"
+            "question": "Os prazos para a realização das tarefas são flexíveis?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Possuo condições adequadas para alcançar os resultados esperados do meu trabalho?"
+            "question": "Possuo condições adequadas para alcançar os resultados esperados do meu trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Há clareza na definição das tarefas?"
+            "question": "Há clareza na definição das tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Há justiça na distribuição das tarefas?"
+            "question": "Há justiça na distribuição das tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Os funcionários participam das decisões sobre o trabalho?"
+            "question": "Os funcionários participam das decisões sobre o trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "A comunicação entre chefe e subordinado é adequada?"
+            "question": "A comunicação entre chefe e subordinado é adequada?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho autonomia para realizar as tarefas como julgo melhor?"
+            "question": "Tenho autonomia para realizar as tarefas como julgo melhor?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Há qualidade na comunicação entre os funcionários?"
+            "question": "Há qualidade na comunicação entre os funcionários?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "As informações de que preciso para executar minhas tarefas são claras?"
+            "question": "As informações de que preciso para executar minhas tarefas são claras?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "A avaliação do meu trabalho inclui aspectos além da minha produção?"
+            "question": "A avaliação do meu trabalho inclui aspectos além da minha produção?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Há flexibilidade nas normas para a execução das tarefas?"
+            "question": "Há flexibilidade nas normas para a execução das tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "As orientações que me são passadas para realizar as tarefas são coerentes entre si?"
+            "question": "As orientações que me são passadas para realizar as tarefas são coerentes entre si?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "As tarefas que executo em meu trabalho são variadas?"
+            "question": "As tarefas que executo em meu trabalho são variadas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho liberdade para opinar sobre o meu trabalho?"
+            "question": "Tenho liberdade para opinar sobre o meu trabalho?",
+            "profile": "NORMAL"
           }
         ]
       },
@@ -113,87 +133,108 @@ async function main() {
         "fields": [
           {
             "type": "RATING",
-            "question": "Em meu trabalho, incentiva-se a idolatria dos chefes?"
+            "question": "Em meu trabalho, incentiva-se a idolatria dos chefes?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "Os gestores desta organização se consideram insubstituíveis?"
+            "question": "Os gestores desta organização se consideram insubstituíveis?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "Aqui os gestores preferem trabalhar individualmente?"
+            "question": "Aqui os gestores preferem trabalhar individualmente?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "Nesta organização os gestores se consideram o centro do mundo?"
+            "question": "Nesta organização os gestores se consideram o centro do mundo?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "Os gestores desta organização fazem qualquer coisa para chamar a atenção?"
+            "question": "Os gestores desta organização fazem qualquer coisa para chamar a atenção?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "É creditada grande importância para as regras nesta organização?"
+            "question": "É creditada grande importância para as regras nesta organização?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "A hierarquia é valorizada nesta organização?"
+            "question": "A hierarquia é valorizada nesta organização?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "Os laços afetivos são fracos entre as pessoas desta organização?"
+            "question": "Os laços afetivos são fracos entre as pessoas desta organização?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "Há forte controle do trabalho?"
+            "question": "Há forte controle do trabalho?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "O ambiente de trabalho se desorganiza com mudanças?"
+            "question": "O ambiente de trabalho se desorganiza com mudanças?",
+            "profile": "INDIVIDUALIST"
           },
           {
             "type": "RATING",
-            "question": "As pessoas são compromissadas com a organização mesmo quando não há retorno adequado?"
+            "question": "As pessoas são compromissadas com a organização mesmo quando não há retorno adequado?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "O mérito das conquistas na empresa é de todos?"
+            "question": "O mérito das conquistas na empresa é de todos?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "O trabalho coletivo é valorizado pelos gestores?"
+            "question": "O trabalho coletivo é valorizado pelos gestores?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "Para esta organização, o resultado do trabalho é visto como uma realização do grupo?"
+            "question": "Para esta organização, o resultado do trabalho é visto como uma realização do grupo?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "As decisões nesta organização são tomadas em grupo?"
+            "question": "As decisões nesta organização são tomadas em grupo?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "Somos incentivados pelos gestores a buscar novos desafios?"
+            "question": "Somos incentivados pelos gestores a buscar novos desafios?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "Os gestores favorecem o trabalho interativo de profissionais de diferentes áreas?"
+            "question": "Os gestores favorecem o trabalho interativo de profissionais de diferentes áreas?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "A competência dos trabalhadores é valorizada pela gestão?"
+            "question": "A competência dos trabalhadores é valorizada pela gestão?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "Existem oportunidades semelhantes de ascensão para todas as pessoas?"
+            "question": "Existem oportunidades semelhantes de ascensão para todas as pessoas?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "Os gestores se preocupam com o bem-estar dos trabalhadores?"
+            "question": "Os gestores se preocupam com o bem-estar dos trabalhadores?",
+            "profile": "COLLECTIVIST"
           },
           {
             "type": "RATING",
-            "question": "A inovação é valorizada nesta organização?"
+            "question": "A inovação é valorizada nesta organização?",
+            "profile": "COLLECTIVIST"
           }
         ]
       },
@@ -203,115 +244,143 @@ async function main() {
         "fields": [
           {
             "type": "RATING",
-            "question": "Sinto-me inútil em meu trabalho?"
+            "question": "Sinto-me inútil em meu trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Considero minhas tarefas insignificantes?"
+            "question": "Considero minhas tarefas insignificantes?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto-me improdutivo no meu trabalho?"
+            "question": "Sinto-me improdutivo no meu trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "A identificação com minhas tarefas é inexistente?"
+            "question": "A identificação com minhas tarefas é inexistente?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto-me desmotivado para realizar minhas tarefas?"
+            "question": "Sinto-me desmotivado para realizar minhas tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho é irrelevante para o desenvolvimento da sociedade?"
+            "question": "Meu trabalho é irrelevante para o desenvolvimento da sociedade?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho é sem sentido?"
+            "question": "Meu trabalho é sem sentido?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Minhas tarefas são banais?"
+            "question": "Minhas tarefas são banais?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Permaneço neste emprego por falta de oportunidade no mercado de trabalho?"
+            "question": "Permaneço neste emprego por falta de oportunidade no mercado de trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho é cansativo?"
+            "question": "Meu trabalho é cansativo?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho é desgastante?"
+            "question": "Meu trabalho é desgastante?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho me frustra?"
+            "question": "Meu trabalho me frustra?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho me sobrecarrega?"
+            "question": "Meu trabalho me sobrecarrega?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho me desanima?"
+            "question": "Meu trabalho me desanima?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Submeter meu trabalho a decisões políticas é fonte de revolta?"
+            "question": "Submeter meu trabalho a decisões políticas é fonte de revolta?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho me faz sofrer?"
+            "question": "Meu trabalho me faz sofrer?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho me causa insatisfação?"
+            "question": "Meu trabalho me causa insatisfação?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meu trabalho é desvalorizado pela organização?"
+            "question": "Meu trabalho é desvalorizado pela organização?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "A submissão do meu chefe às ordens superiores me causa revolta?"
+            "question": "A submissão do meu chefe às ordens superiores me causa revolta?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meus colegas desvalorizam meu trabalho?"
+            "question": "Meus colegas desvalorizam meu trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Falta-me liberdade para dizer o que penso sobre meu trabalho?"
+            "question": "Falta-me liberdade para dizer o que penso sobre meu trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Meus colegas são indiferentes comigo?"
+            "question": "Meus colegas são indiferentes comigo?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sou excluído do planejamento de minhas próprias tarefas?"
+            "question": "Sou excluído do planejamento de minhas próprias tarefas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Minha chefia trata meu trabalho com indiferença?"
+            "question": "Minha chefia trata meu trabalho com indiferença?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "É difícil a convivência com meus colegas?"
+            "question": "É difícil a convivência com meus colegas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "O trabalho que realizo é desqualificado pela chefia?"
+            "question": "O trabalho que realizo é desqualificado pela chefia?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Falta-me liberdade para dialogar com minha chefia?"
+            "question": "Falta-me liberdade para dialogar com minha chefia?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Há desconfiança na relação entre chefia e subordinado?"
+            "question": "Há desconfiança na relação entre chefia e subordinado?",
+            "profile": "NORMAL"
           }
         ]
       },
@@ -321,95 +390,118 @@ async function main() {
         "fields": [
           {
             "type": "RATING",
-            "question": "Sinto amargura?"
+            "question": "Sinto amargura?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto uma sensação de vazio?"
+            "question": "Sinto uma sensação de vazio?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho mau-humor frequentemente?"
+            "question": "Tenho mau-humor frequentemente?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto vontade de desistir de tudo?"
+            "question": "Sinto vontade de desistir de tudo?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto tristeza frequentemente?"
+            "question": "Sinto tristeza frequentemente?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto perda da autoconfiança?"
+            "question": "Sinto perda da autoconfiança?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto solidão?"
+            "question": "Sinto solidão?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sou insensível em relação aos colegas?"
+            "question": "Sou insensível em relação aos colegas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho dificuldades nas relações fora do trabalho?"
+            "question": "Tenho dificuldades nas relações fora do trabalho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto vontade de ficar sozinho?"
+            "question": "Sinto vontade de ficar sozinho?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho conflitos nas relações familiares?"
+            "question": "Tenho conflitos nas relações familiares?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sou agressivo com os outros?"
+            "question": "Sou agressivo com os outros?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho dificuldade em manter amizades?"
+            "question": "Tenho dificuldade em manter amizades?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto impaciência com as pessoas em geral?"
+            "question": "Sinto impaciência com as pessoas em geral?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto dores no corpo?"
+            "question": "Sinto dores no corpo?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto dores no braço?"
+            "question": "Sinto dores no braço?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto dor de cabeça frequentemente?"
+            "question": "Sinto dor de cabeça frequentemente?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho distúrbios digestivos?"
+            "question": "Tenho distúrbios digestivos?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto dores nas costas?"
+            "question": "Sinto dores nas costas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho alterações no sono?"
+            "question": "Tenho alterações no sono?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Sinto dores nas pernas?"
+            "question": "Sinto dores nas pernas?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho distúrbios circulatórios?"
+            "question": "Tenho distúrbios circulatórios?",
+            "profile": "NORMAL"
           },
           {
             "type": "RATING",
-            "question": "Tenho alterações no apetite?"
+            "question": "Tenho alterações no apetite?",
+            "profile": "NORMAL"
           }
         ]
       }
@@ -432,6 +524,7 @@ async function main() {
           create: form.fields.map((field) => ({
             text: field.question,
             type: field.type,
+            profile: field.profile
           }))
         }
       },
