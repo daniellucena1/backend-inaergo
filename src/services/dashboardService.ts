@@ -1,4 +1,5 @@
 import { Forbidden } from "../@errors/Forbidden";
+import { NotFound } from "../@errors/NotFound";
 import prisma from "./prisma"
 
 // 5 funcionarios 2 - 5 risco alto
@@ -16,7 +17,7 @@ import prisma from "./prisma"
 // 3.7 - 5 Risco Baixo
 
 export const dashboardService = {
-  getDashboardInfo: async (managerId: number, sector?: string, baseAge?: number, ceilAge?: number, gender?: string, baseCompanyTime?: number, ceilCompanyTime?: number) => {
+  getDashboardInfo: async (managerId: number, reviewId?: number,sector?: string, baseAge?: number, ceilAge?: number, gender?: string, baseCompanyTime?: number, ceilCompanyTime?: number) => {
     const manager = await prisma.user.findUnique({
       where: {
         id: managerId
@@ -25,6 +26,32 @@ export const dashboardService = {
 
     if (manager?.companyId === null) {
       throw new Forbidden('Usuário não é um gerente');
+    }
+
+    let review;
+
+    if (!reviewId) {
+      const now = new Date();
+      review = await prisma.review.findFirst({
+        where: {
+          AND: [
+            { openingDate: { lte: now } },
+            { finishingDate: { gte: now } }
+          ]
+        }
+      })
+    } else {
+      review = await prisma.review.findUnique({
+        where: {
+          id: reviewId
+        }
+      });
+    }
+
+    console.log(review)
+
+    if (!review) {
+      throw new NotFound("Avalição não encontrada");
     }
 
     const employees = await prisma.employee.findMany({
@@ -46,9 +73,11 @@ export const dashboardService = {
       }
     });
 
-    console.log(employees);
-
-    const allEmployes = await prisma.employee.findMany();
+    const allEmployes = await prisma.employee.findMany({
+      where: {
+        companyId: manager?.companyId
+      }
+    });
 
     const uniqueSectors = [...new Set(allEmployes.map(employee => employee.sector))];
 
@@ -72,7 +101,7 @@ export const dashboardService = {
           let medio = 0;
           let baixo = 0;
           employees.map((e) => {
-            const answers = e.Answer.filter(a => a.questionId === q.id)
+            const answers = e.Answer.filter(a => (a.questionId === q.id && a.reviewId === review.id))
 
             answers.map((a) => {
               if (a.value >= 1 && a.value <= 2.29) {

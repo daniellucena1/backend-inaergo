@@ -29,11 +29,26 @@ export const answerService = {
         throw new Forbidden('Funcionário não pode responder mais de uma vez');
       }
 
+      const now = new Date();
+      const review = await prisma.review.findFirst({
+        where: {
+          AND: [
+            { openingDate: { lte: now } },
+            { finishingDate: { gte: now } }
+          ]
+        }
+      });
+
+      if (!review) {
+        throw new NotFound("Nenhuma avaliação disponível");
+      }
+
       return prisma.answer.create({
         data: {
           employeeId: employeeId,
           questionId: ans.questionId,
-          value: ans.answer
+          value: ans.answer,
+          reviewId: review.id
         }
       })
     }))
