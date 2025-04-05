@@ -50,6 +50,8 @@ export const reviewService = {
           throw new NotFound("Gestor não encontrado");
         }
 
+        const isOpen = review.openingDate <= new Date() && review.finishingDate >= new Date();
+
         return {
           id: review.id,
           title: review.title,
@@ -57,6 +59,7 @@ export const reviewService = {
           finishingDate: review.finishingDate,
           createdAt: review.createdAt,
           updatedAt: review.updatedAt,
+          isOpen,
         };
       })
     );
