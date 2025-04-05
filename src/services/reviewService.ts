@@ -221,5 +221,20 @@ export const reviewService = {
     }
 
     return review;
+  },
+
+  deleteReview: async (reviewId: number) => {
+
+    const review = await prisma.review.delete({
+      where: {
+        id: reviewId
+      }
+    });
+
+    if (!review) {
+      throw new NotFound("Avaliação não encontrada");
+    }
+
+    return review;
   }
 } 
