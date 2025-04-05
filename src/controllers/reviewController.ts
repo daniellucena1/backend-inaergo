@@ -80,5 +80,26 @@ export const reviewController = {
     } catch (error) {
       next(error)
     }
+  },
+
+  deleteReview: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reviewId = Number(req.params.id);
+
+      if (!reviewId) {
+        throw new BadRequest("Identificador da avaliação necessário");
+      }
+
+      const response = await reviewService.deleteReview(reviewId);
+
+      if (!response) {
+        throw new NotFound("Avaliação não encontrada");
+      }
+
+      res.json(response);
+    } catch (error) {
+      next(error);
+      
+    }
   }
 }
