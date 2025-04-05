@@ -21,10 +21,6 @@ export const reviewService = {
     const reviews = await prisma.review.findMany({
       where: {
           companyId: manager.companyId,
-          
-      },
-      orderBy: {
-        finishingDate: "desc"
       },
       select: {
         updatedAt: true,
@@ -33,10 +29,24 @@ export const reviewService = {
         title: true,
         openingDate: true,
         finishingDate: true,
-        createdAt: true
+        createdAt: true,
+        isOpen: true
       }
     });
 
+    reviews.sort((a, b) => {
+      if (a.isOpen && !b.isOpen) return -1;
+      if (!a.isOpen && b.isOpen) return 1;
+
+      if (!a.isOpen && !b.isOpen) {
+        const dateA = new Date(a.finishingDate);
+        const dateB = new Date(b.finishingDate);
+        return dateB.getTime() - dateA.getTime(); 
+      }
+    
+      return 0;
+    });
+    
     if (!reviews) {
       throw new NotFound("Avaliações não encontradas");
     }
@@ -53,8 +63,6 @@ export const reviewService = {
           throw new NotFound("Gestor não encontrado");
         }
 
-        const isOpen = review.openingDate <= new Date() && review.finishingDate >= new Date();
-
         return {
           id: review.id,
           title: review.title,
@@ -62,7 +70,7 @@ export const reviewService = {
           finishingDate: review.finishingDate,
           createdAt: review.createdAt,
           updatedAt: review.updatedAt,
-          isOpen,
+          isOpen: review.isOpen,
         };
       })
     );
@@ -123,15 +131,15 @@ export const reviewService = {
     const existingReview = await prisma.review.findFirst({
       where: {
         companyId: manager.companyId,
-        AND: [
-          { openingDate: { lte: new Date() } },
-          { finishingDate: { gte: new Date() } }
-        ]
-      }
+        isOpen: true
+      },
+      
     });
 
     if (existingReview) {
-      reviewService.closeReview(existingReview.id, managerId);
+      if (openingDate < existingReview.finishingDate) {
+        reviewService.closeReview(existingReview.id, managerId);
+      }
     }
 
     const createdReview = await prisma.review.create({
@@ -140,6 +148,7 @@ export const reviewService = {
         companyId: manager.companyId,
         openingDate,
         finishingDate,
+        isOpen: openingDate <= new Date() && finishingDate >= new Date(),
       }
     });
 
@@ -160,17 +169,21 @@ export const reviewService = {
       throw new NotFound("Gestor não econtrado");
     }
 
+    if (!manager.companyId) {
+      throw new NotFound("Identificador da empresa não encontrado");
+    }
+
     const openedReview = await prisma.review.findFirst({
       where: {
-        AND: [
-          { openingDate : { lte: new Date() }},
-          { finishingDate : { gte: new Date() }}
-        ]
+        companyId: manager.companyId,
+        isOpen: true
       }
     });
 
     if (openedReview) {
-      reviewService.closeReview(openedReview.id, managerId);
+      if (newOpeningDate < openedReview.finishingDate) {
+        reviewService.closeReview(openedReview.id, managerId);
+      }
     }
 
     const review = await prisma.review.update({
@@ -182,7 +195,8 @@ export const reviewService = {
       },
       data: {
         openingDate: newOpeningDate,
-        finishingDate: newFinishingDate
+        finishingDate: newFinishingDate,
+        isOpen: true
       }
     });
 
@@ -212,7 +226,8 @@ export const reviewService = {
         ]
       },
       data: {
-        finishingDate: new Date()
+        finishingDate: new Date(),
+        isOpen: false
       }   
     });
 

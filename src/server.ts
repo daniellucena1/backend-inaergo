@@ -11,6 +11,7 @@ import reviewRoute from './routes/reviewRoute';
 import { notFoundRoute } from './routes/notFoundRoute';
 import cors from 'cors';
 import { errorHandlerMiddleware } from "./middlewares/errorHandlerMiddleware";
+import './cron/schedule'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
