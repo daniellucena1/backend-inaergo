@@ -23,6 +23,9 @@ export const reviewService = {
           companyId: manager.companyId,
           
       },
+      orderBy: {
+        finishingDate: "desc"
+      },
       select: {
         updatedAt: true,
         companyId: true,
@@ -117,6 +120,20 @@ export const reviewService = {
       throw new NotFound("Identificador da empresa não encontrado");
     }
 
+    const existingReview = await prisma.review.findFirst({
+      where: {
+        companyId: manager.companyId,
+        AND: [
+          { openingDate: { lte: new Date() } },
+          { finishingDate: { gte: new Date() } }
+        ]
+      }
+    });
+
+    if (existingReview) {
+      reviewService.closeReview(existingReview.id, managerId);
+    }
+
     const createdReview = await prisma.review.create({
       data: {
         title,
@@ -143,6 +160,19 @@ export const reviewService = {
       throw new NotFound("Gestor não econtrado");
     }
 
+    const openedReview = await prisma.review.findFirst({
+      where: {
+        AND: [
+          { openingDate : { lte: new Date() }},
+          { finishingDate : { gte: new Date() }}
+        ]
+      }
+    });
+
+    if (openedReview) {
+      reviewService.closeReview(openedReview.id, managerId);
+    }
+
     const review = await prisma.review.update({
       where: {
         id: reviewId,
@@ -158,6 +188,36 @@ export const reviewService = {
 
     if (!review) {
       throw new NotFound("Avaliação já está aberta ou não existe");
+    }
+
+    return review;
+  },
+
+  closeReview: async (reviewId: number, managerId: number) => {
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
+      }
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não encontrado");
+    }
+
+    const review = await prisma.review.update({
+      where: {
+        id: reviewId,
+        AND: [
+          { finishingDate : { gte: new Date() }}
+        ]
+      },
+      data: {
+        finishingDate: new Date()
+      }   
+    });
+
+    if (!review) {
+      throw new NotFound("Avaliação já está fechada ou não existe");
     }
 
     return review;
