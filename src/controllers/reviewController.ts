@@ -61,9 +61,11 @@ export const reviewController = {
       const schema = z.object({
         reviewId: z.coerce.number(),
         newOpeningDate: z.coerce.date(),
-        newFinishingDate: z.coerce.date()
+        newFinishingDate: z.coerce.date(),
+        newTitle: z.string().optional()
       })
-      const { reviewId, newOpeningDate, newFinishingDate } = schema.parse(req.body);
+      console.log(req.body)
+      const { reviewId, newOpeningDate, newFinishingDate, newTitle } = schema.parse(req.body);
       const managerId = req.user?.id;
 
       if (!reviewId) {
@@ -74,7 +76,7 @@ export const reviewController = {
         throw new BadRequest("Gestor não encontrado");
       }
 
-      const response = await reviewService.reopenReview(reviewId, newOpeningDate, newFinishingDate, managerId);
+      const response = await reviewService.reopenReview(reviewId, newOpeningDate, newFinishingDate, managerId, newTitle);
 
       res.json(response);
     } catch (error) {

@@ -158,7 +158,7 @@ export const reviewService = {
     }
   },
 
-  reopenReview: async (reviewId: number, newOpeningDate: Date, newFinishingDate: Date, managerId: number) => {
+  reopenReview: async (reviewId: number, newOpeningDate: Date, newFinishingDate: Date, managerId: number, newTitle?: string) => {
     const manager = await prisma.user.findUnique({
       where: {
         id: managerId
@@ -189,14 +189,12 @@ export const reviewService = {
     const review = await prisma.review.update({
       where: {
         id: reviewId,
-        AND: [
-          { finishingDate : { gte: newOpeningDate }}
-        ]
       },
       data: {
+        title: newTitle ? newTitle : undefined,
         openingDate: newOpeningDate,
         finishingDate: newFinishingDate,
-        isOpen: true
+        isOpen: newOpeningDate <= new Date() && newFinishingDate >= new Date()
       }
     });
 
