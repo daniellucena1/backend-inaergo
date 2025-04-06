@@ -2,10 +2,25 @@ import { NotFound } from '../@errors/NotFound';
 import prisma from '../services/prisma';
 
 export const reviewService = {
-  getReviewsByCompanyId: async (companyId: number) => {
+  getReviewsByCompanyId: async (managerId: number) => {
+
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
+      }
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não encontrado");
+    }
+
+    if (!manager.companyId) {
+      throw new NotFound("Identificador da empresa não encontrado");
+    }
+
     const reviews = await prisma.review.findMany({
       where: {
-          companyId
+          companyId: manager.companyId,
       },
       select: {
         updatedAt: true,
@@ -14,10 +29,24 @@ export const reviewService = {
         title: true,
         openingDate: true,
         finishingDate: true,
-        createdAt: true
+        createdAt: true,
+        isOpen: true
       }
     });
 
+    reviews.sort((a, b) => {
+      if (a.isOpen && !b.isOpen) return -1;
+      if (!a.isOpen && b.isOpen) return 1;
+
+      if (!a.isOpen && !b.isOpen) {
+        const dateA = new Date(a.finishingDate);
+        const dateB = new Date(b.finishingDate);
+        return dateB.getTime() - dateA.getTime(); 
+      }
+    
+      return 0;
+    });
+    
     if (!reviews) {
       throw new NotFound("Avaliações não encontradas");
     }
@@ -27,6 +56,8 @@ export const reviewService = {
         const manager = await prisma.user.findFirst({
           where: { companyId: review.companyId, type: "MANAGER" },
         });
+
+        console.log("manager", manager);
 
         if (!manager) {
           throw new NotFound("Gestor não encontrado");
@@ -39,12 +70,13 @@ export const reviewService = {
           finishingDate: review.finishingDate,
           createdAt: review.createdAt,
           updatedAt: review.updatedAt,
+          isOpen: review.isOpen,
         };
       })
     );
 
     return {
-      companyId,
+      companyId: manager.companyId,
       reviews: formattedReviews
     };
   },
@@ -96,12 +128,27 @@ export const reviewService = {
       throw new NotFound("Identificador da empresa não encontrado");
     }
 
+    const existingReview = await prisma.review.findFirst({
+      where: {
+        companyId: manager.companyId,
+        isOpen: true
+      },
+      
+    });
+
+    if (existingReview) {
+      if (openingDate < existingReview.finishingDate) {
+        reviewService.closeReview(existingReview.id, managerId);
+      }
+    }
+
     const createdReview = await prisma.review.create({
       data: {
         title,
         companyId: manager.companyId,
         openingDate,
         finishingDate,
+        isOpen: openingDate <= new Date() && finishingDate >= new Date(),
       }
     });
 
@@ -122,6 +169,23 @@ export const reviewService = {
       throw new NotFound("Gestor não econtrado");
     }
 
+    if (!manager.companyId) {
+      throw new NotFound("Identificador da empresa não encontrado");
+    }
+
+    const openedReview = await prisma.review.findFirst({
+      where: {
+        companyId: manager.companyId,
+        isOpen: true
+      }
+    });
+
+    if (openedReview) {
+      if (newOpeningDate < openedReview.finishingDate) {
+        reviewService.closeReview(openedReview.id, managerId);
+      }
+    }
+
     const review = await prisma.review.update({
       where: {
         id: reviewId,
@@ -131,12 +195,59 @@ export const reviewService = {
       },
       data: {
         openingDate: newOpeningDate,
-        finishingDate: newFinishingDate
+        finishingDate: newFinishingDate,
+        isOpen: true
       }
     });
 
     if (!review) {
       throw new NotFound("Avaliação já está aberta ou não existe");
+    }
+
+    return review;
+  },
+
+  closeReview: async (reviewId: number, managerId: number) => {
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
+      }
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não encontrado");
+    }
+
+    const review = await prisma.review.update({
+      where: {
+        id: reviewId,
+        AND: [
+          { finishingDate : { gte: new Date() }}
+        ]
+      },
+      data: {
+        finishingDate: new Date(),
+        isOpen: false
+      }   
+    });
+
+    if (!review) {
+      throw new NotFound("Avaliação já está fechada ou não existe");
+    }
+
+    return review;
+  },
+
+  deleteReview: async (reviewId: number) => {
+
+    const review = await prisma.review.delete({
+      where: {
+        id: reviewId
+      }
+    });
+
+    if (!review) {
+      throw new NotFound("Avaliação não encontrada");
     }
 
     return review;

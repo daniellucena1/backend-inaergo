@@ -65,8 +65,9 @@ model Review {
   companyId     Int
   company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   title         String
-  openingDate   DateTime 
-  finishingDate DateTime 
+  openingDate   DateTime
+  finishingDate DateTime
+  isOpen        Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   Answer        Answer[]
@@ -89,11 +90,11 @@ enum Type {
 }
 
 model Question {
-  id     Int    @id @default(autoincrement())
-  text   String
-  type   Type
-  pageId Int
-  profile Profile 
+  id      Int     @id @default(autoincrement())
+  text    String
+  type    Type
+  pageId  Int
+  profile Profile
 
   page   Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
   Answer Answer[]

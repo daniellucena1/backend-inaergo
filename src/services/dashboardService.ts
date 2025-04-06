@@ -161,6 +161,18 @@ export const dashboardService = {
       }
     });
 
+    const answers = await prisma.answer.findMany({
+      where: {
+        reviewId: review.id,
+      }
+    });
+
+    console.log(answers)
+
+    if (answers.length === 0) {
+      throw new NotFound("Não existem respostas para este avaliação");
+    }
+
     const allEmployes = await prisma.employee.findMany({
       where: {
         companyId: manager?.companyId
