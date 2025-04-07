@@ -59,13 +59,12 @@ export const reviewController = {
     try {
 
       const schema = z.object({
-        reviewId: z.coerce.number(),
         newOpeningDate: z.coerce.date(),
         newFinishingDate: z.coerce.date(),
         newTitle: z.string().optional()
       })
-      console.log(req.body)
-      const { reviewId, newOpeningDate, newFinishingDate, newTitle } = schema.parse(req.body);
+      const { newOpeningDate, newFinishingDate, newTitle } = schema.parse(req.body);
+      const reviewId = Number(req.params.id);
       const managerId = req.user?.id;
 
       if (!reviewId) {
