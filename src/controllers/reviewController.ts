@@ -64,7 +64,8 @@ export const reviewController = {
         newTitle: z.string().optional()
       })
       const { newOpeningDate, newFinishingDate, newTitle } = schema.parse(req.body);
-      const reviewId = Number(req.params.id);
+      const reviewId = parseInt(req.params.id);
+      console.log(reviewId);
       const managerId = req.user?.id;
 
       if (!reviewId) {
