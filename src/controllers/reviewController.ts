@@ -63,7 +63,7 @@ export const reviewController = {
         newOpeningDate: z.coerce.date(),
         newFinishingDate: z.coerce.date(),
         newTitle: z.string().optional()
-      })
+      });
       const { reviewId, newOpeningDate, newFinishingDate, newTitle } = schema.parse(req.body);
 
       const managerId = req.user?.id;
