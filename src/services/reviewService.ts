@@ -181,7 +181,7 @@ export const reviewService = {
     });
 
     if (openedReview) {
-      if (newOpeningDate < openedReview.finishingDate) {
+      if (newOpeningDate < openedReview.finishingDate && openedReview.id !== reviewId) {
         reviewService.closeReview(openedReview.id, managerId);
       }
     }
