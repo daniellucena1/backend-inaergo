@@ -57,7 +57,7 @@ export const reviewService = {
           where: { companyId: review.companyId, type: "MANAGER" },
         });
 
-        console.log("manager", manager);
+        // console.log("manager", manager);
 
         if (!manager) {
           throw new NotFound("Gestor não encontrado");

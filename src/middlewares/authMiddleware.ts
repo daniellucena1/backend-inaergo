@@ -16,7 +16,7 @@ export const authMiddleware = {
   authenticate: (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(" ")[1];
 
-    console.log(token);
+    // console.log(token);
 
     if (!token) {
       throw new Unauthorized("Token não fornecido");
@@ -28,7 +28,7 @@ export const authMiddleware = {
 
       return next();
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       next(error)
     }
   },
