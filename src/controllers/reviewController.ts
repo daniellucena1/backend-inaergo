@@ -63,10 +63,15 @@ export const reviewController = {
         newFinishingDate: z.coerce.date(),
         newTitle: z.string().optional()
       });
+
+      const schemaReview = z.object({
+        reviewId: z.coerce.number()
+      });
+
       const { newOpeningDate, newFinishingDate, newTitle } = schema.parse(req.body);
       const managerId = req.user?.id;
 
-      const reviewId = Number(req.params.id);
+      const {reviewId} = schemaReview.parse(req.params);
 
       if (!reviewId) {
         throw new BadRequest("Identificador da avaliação necessário");
