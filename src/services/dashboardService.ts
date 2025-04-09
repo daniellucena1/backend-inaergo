@@ -121,13 +121,10 @@ export const dashboardService = {
     let review;
 
     if (!reviewId) {
-      const now = new Date();
+      // const now = new Date();
       review = await prisma.review.findFirst({
         where: {
-          AND: [
-            { openingDate: { lte: now } },
-            { finishingDate: { gte: now } }
-          ]
+          isOpen: true,
         }
       })
     } else {
@@ -193,27 +190,30 @@ export const dashboardService = {
 
     const response = await Promise.all(pages.map(async (p) => {
       if (p.number === 2) {
-        return await dashboardService.getInfoPageEEG(p, employees, review);
+        return await dashboardService.getIndividualistPageEEG(p, employees, review);
       }
-    
+
+      if (p.number === 3) {
+        return await dashboardService.getCollectivistPageEEG(p, employees, review);
+      }
+
       if (p.number === 1) {
         return await dashboardService.getInfoPageEOT(p, employees, review);
-      }
-    
-      const { result, allData } = dashboardService.processQuestions(
-        p.Question,
-        employees,
-        review,
-        ["Risco Alto", "Risco Médio", "Risco Baixo"],
-        p.number
-      );
-    
-      return {
-        title: p.title,
-        number: p.number,
-        questions: result,
-        data: allData
-      };
+      } 
+        const { result, allData } = dashboardService.processQuestions(
+          p.Question,
+          employees,
+          review,
+          ["Risco Alto", "Risco Médio", "Risco Baixo"],
+          p.number
+        );
+      
+        return {
+          title: p.title,
+          number: p.number,
+          questions: result,
+          data: allData
+        };  
     }))
 
     return {
@@ -222,10 +222,10 @@ export const dashboardService = {
     };
   },
 
-  getInfoPageEEG: async (page: Prisma.PageGetPayload<{ include: { Question: { include: { Answer: true }} } }>, employees: Prisma.EmployeeGetPayload<{ include: { Answer: true }}>[], review: Review) => {
+  getIndividualistPageEEG: async (page: Prisma.PageGetPayload<{ include: { Question: { include: { Answer: true }} } }>, employees: Prisma.EmployeeGetPayload<{ include: { Answer: true }}>[], review: Review) => {
 
     const individualistQuestions = page.Question.filter(q => q.profile === Profile.INDIVIDUALIST);
-    const collectivistQuestions = page.Question.filter(q => q.profile === Profile.COLLECTIVIST);
+    // const collectivistQuestions = page.Question.filter(q => q.profile === Profile.COLLECTIVIST);
 
     const individualistProcessado = dashboardService.processQuestions(
       individualistQuestions,
@@ -235,6 +235,25 @@ export const dashboardService = {
       page.number
     );
 
+    // const collectivistProcessado = dashboardService.processQuestions(
+    //   collectivistQuestions,
+    //   employees,
+    //   review,
+    //   ["Predominante", "Presença Moderada", "Pouco Característico"],
+    //   page.number
+    // );
+
+    return {
+      title: page.title + " - Individualista",
+      number: page.number,
+      questions: individualistProcessado.result,
+      data: individualistProcessado.allData
+    };
+  },
+
+  getCollectivistPageEEG: async (page: Prisma.PageGetPayload<{ include: { Question: { include: { Answer: true }} } }>, employees: Prisma.EmployeeGetPayload<{ include: { Answer: true }}>[], review: Review) => {
+    const collectivistQuestions = page.Question.filter(q => q.profile === Profile.COLLECTIVIST);
+    // const individualistQuestions = page.Question.filter(q => q.profile === Profile.INDIVIDUALIST);
     const collectivistProcessado = dashboardService.processQuestions(
       collectivistQuestions,
       employees,
@@ -242,18 +261,18 @@ export const dashboardService = {
       ["Predominante", "Presença Moderada", "Pouco Característico"],
       page.number
     );
-
+    // const individualistProcessado = dashboardService.processQuestions(
+    //   individualistQuestions,
+    //   employees,
+    //   review,
+    //   ["Predominante", "Presença Moderada", "Pouco Característico"],
+    //   page.number
+    // );
     return {
-      title: page.title,
+      title: page.title + " - Coletivista",
       number: page.number,
-      individualist: {
-        questions: individualistProcessado.result,
-        data: individualistProcessado.allData
-      },
-      collectivist: {
-        questions: collectivistProcessado.result,
-        data: collectivistProcessado.allData
-      }
+      questions: collectivistProcessado.result,
+      data: collectivistProcessado.allData
     };
   },
 

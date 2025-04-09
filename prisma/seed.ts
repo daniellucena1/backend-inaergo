@@ -181,6 +181,13 @@ async function main() {
             "question": "O ambiente de trabalho se desorganiza com mudanças?",
             "profile": "INDIVIDUALIST"
           },
+          
+        ]
+      },
+      {
+        "page": 3,
+        "title": "Escala dos Estilos de Gestão (EEG)",
+        "fields": [
           {
             "type": "RATING",
             "question": "As pessoas são compromissadas com a organização mesmo quando não há retorno adequado?",
@@ -239,7 +246,7 @@ async function main() {
         ]
       },
       {
-        "page": 3,
+        "page": 4,
         "title": "Escala de Indicadores de Sofrimento no Trabalho (EIST)",
         "fields": [
           {
@@ -385,7 +392,7 @@ async function main() {
         ]
       },
       {
-        "page": 4,
+        "page": 5,
         "title": "Escala de Danos Relacionados ao Trabalho (EDT)",
         "fields": [
           {
