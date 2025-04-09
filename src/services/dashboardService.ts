@@ -216,6 +216,8 @@ export const dashboardService = {
         };  
     }))
 
+    response.sort((a, b) => a.number - b.number);
+
     return {
       pages: response,
       sectors: uniqueSectors
