@@ -32,6 +32,16 @@ export const authService = {
       }
     });
 
+    const openedReview = await prisma.review.findFirst({
+      where: {
+        isOpen: true
+      }
+    });
+
+    if (!openedReview || openedReview.isOpen === false) {
+      throw new Forbidden("Nenhuma avaliação em andamento");
+    }
+
     if (!user) {
       throw new NotFound("Funcionário não encontrado");
     }
