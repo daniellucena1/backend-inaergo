@@ -273,9 +273,7 @@ export const reviewService = {
     const review = await prisma.review.update({
       where: {
         id: reviewId,
-        AND: [
-          { finishingDate : { gte: new Date() }}
-        ]
+        isOpen: true
       },
       data: {
         finishingDate: new Date(),

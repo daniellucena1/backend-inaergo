@@ -8,6 +8,7 @@ route.get("/review", authMiddleware.authenticate, authMiddleware.isManager, revi
 route.post("/review", authMiddleware.authenticate, authMiddleware.isManager, reviewController.createReview);
 route.put("/review/reopen/:reviewId", authMiddleware.authenticate, authMiddleware.isManager, reviewController.reopenReview);
 route.put("/review/update/:reviewId", authMiddleware.authenticate, authMiddleware.isManager, reviewController.updateReview);
+route.put("/review/close/:reviewId", authMiddleware.authenticate, authMiddleware.isManager, reviewController.closeReview);
 route.delete("/review/:id", authMiddleware.authenticate, authMiddleware.isManager, reviewController.deleteReview);
 
 export default route;
