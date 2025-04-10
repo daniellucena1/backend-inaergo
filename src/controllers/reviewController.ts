@@ -89,6 +89,36 @@ export const reviewController = {
     }
   },
 
+  updateReview: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      const managerId = req.user?.id;
+
+      if (!managerId) {
+        throw new BadRequest("Gestor não encontrado");
+      }
+
+      const schema = z.object({
+        title: z.string().optional(),
+        newFinishingDate: z.coerce.date().optional()
+      });
+
+      const { title, newFinishingDate } = schema.parse(req.body);
+      const { reviewId } = req.params;
+
+      if (!reviewId) {
+        throw new BadRequest("Identificador da avaliação necessário");
+      }
+
+      const response = await reviewService.updateReview(Number(reviewId), managerId, newFinishingDate, title);
+
+      return res.json(response);
+
+    } catch (error) {
+      next(error);
+    }
+  },
+
   deleteReview: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const reviewId = Number(req.params.id);

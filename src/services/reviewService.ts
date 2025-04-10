@@ -205,6 +205,60 @@ export const reviewService = {
     return review;
   },
 
+  updateReview: async (reviewId: number, managerId: number, newFinishingDate?: Date, title?: string) => {
+    const manager = await prisma.user.findUnique({
+      where: {
+        id: managerId
+      }
+    });
+
+    if (!manager) {
+      throw new NotFound("Gestor não encontrado");
+    }
+
+    if (!manager.companyId) {
+      throw new NotFound("Identificador da empresa não encontrado");
+    }
+
+    const review = await prisma.review.findUnique({
+      where: {
+        id: reviewId
+      }
+    });
+
+    if (!review) {
+      throw new NotFound("Avaliação não encontrada");
+    }
+
+    const openedReview = await prisma.review.findFirst({
+      where: {
+        companyId: manager.companyId,
+        isOpen: true
+      }
+    });
+
+    const reviewUpdate = await prisma.review.update({
+      where: {
+        id: reviewId,
+      },
+      data: {
+        finishingDate: newFinishingDate,
+        isOpen: newFinishingDate? newFinishingDate <= new Date() ? false : review.isOpen : undefined,
+        title: title ? title : undefined
+      }
+    });
+
+    if (!reviewUpdate) {
+      throw new NotFound("Avaliação não existe");
+    }
+
+    if (reviewUpdate.isOpen && openedReview && openedReview.id !== reviewUpdate.id) {
+      reviewService.closeReview(openedReview.id, managerId);
+    }
+
+    return reviewUpdate;
+  },
+
   closeReview: async (reviewId: number, managerId: number) => {
     const manager = await prisma.user.findUnique({
       where: {
