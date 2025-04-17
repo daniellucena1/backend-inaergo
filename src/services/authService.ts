@@ -23,10 +23,13 @@ export const authService = {
     return authService.handleLogin(user, password);
   },
 
-  loginFuncionario: async (registration: string) => {
+  loginFuncionario: async (registration: string, companyId: number) => {
     const user = await prisma.employee.findUnique({
       where: {
-        registration: registration
+        registrationCompanyId: {
+          registration: registration,
+          companyId: companyId
+        }
       }, include: {
         Answer: true
       }
