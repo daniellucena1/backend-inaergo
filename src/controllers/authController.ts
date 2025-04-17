@@ -29,7 +29,13 @@ export const authController = {
   loginFuncionario: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { registration } = req.body;
-      const { token, user } = await authService.loginFuncionario(registration);
+      const companyId = req.params.companyId;
+
+      if (!companyId) {
+        throw new BadRequest("Identificador da empresa não fornecido");
+      }
+
+      const { token, user } = await authService.loginFuncionario(registration, Number(companyId));
       res.json({ token, user });
     } catch (error) {
       next(error);

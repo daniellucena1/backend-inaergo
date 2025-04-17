@@ -1,3 +1,4 @@
+import { BadRequest } from "../@errors/BadRequest";
 import { Forbidden } from "../@errors/Forbidden";
 import { InternalServerError } from "../@errors/InternalServerError";
 import { NotFound } from "../@errors/NotFound";
@@ -38,9 +39,16 @@ export const employeeService = {
 
   updateEmployee: async (registration: string, name?: string, email?: string, age?: number, gender?: string, scholarship?: string, meritalStatus?: string, sector?: string, position?: string, companyTime?: number, positionTime?: number, healthProblemLastYear?: string, companyId?: number) => {
 
+    if (!companyId) {
+      throw new BadRequest('Identificador da empresa não encontrado');
+    }
+
     const employee = await prisma.employee.findUnique({
       where: {
-        registration
+        registrationCompanyId: {
+          registration: registration,
+          companyId: companyId
+        }
       }
     });
 
@@ -49,7 +57,12 @@ export const employeeService = {
     }
 
     const updatedEmployee = await prisma.employee.update({
-      where: { registration: registration },
+      where: { 
+        registrationCompanyId: {
+          registration: registration,
+          companyId: companyId
+        }
+      },
       data: {
         name: name !== "" ? name : employee.name,
         registration: registration !== "" ? registration : employee.registration,
