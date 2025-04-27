@@ -66,7 +66,6 @@ export const userService = {
   },
 
   getManagers: async (companyId: number) => {
-
     const managers = await prisma.user.findMany({
       where: {
         companyId: companyId ? companyId : undefined,
@@ -74,6 +73,14 @@ export const userService = {
       },
       omit: {
         password: true
+      },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
       }
     });
 
