@@ -9,5 +9,6 @@ const router = Router()
 router.get('/employee', authMiddleware.authenticate, authMiddleware.isManager, employeeController.getAllEmloyees);
 router.put('/employee/:registration', authMiddleware.authenticate, authMiddleware.isManager, employeeController.updateEmployee);
 router.delete('/employee/:id', authMiddleware.authenticate, employeeController.deleteEmployee);
+router.put('/employee/status/:id', authMiddleware.authenticate, authMiddleware.isManager, employeeController.toggleBlock);
 
 export default router;

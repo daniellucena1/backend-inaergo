@@ -53,6 +53,10 @@ export const authService = {
       throw new Forbidden("Funcionário já respondeu a pesquisa");
     }
 
+    if (user.isBlocked) {
+      throw new Forbidden("Funcionário não pode responder a pesquisa");
+    }
+
     return authService.handleLoginEmployee(user, registration);
   },
 

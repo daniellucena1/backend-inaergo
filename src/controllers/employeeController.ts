@@ -98,5 +98,17 @@ export const employeeController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async toggleBlock(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const response = await employeeService.toggleBlock(parseInt(id));
+
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
   }
 }
