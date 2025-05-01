@@ -132,5 +132,24 @@ export const employeeService = {
     }
     
     return true;
+  },
+
+  toggleBlock: async (id: number) => {
+    const employee = await prisma.employee.findUnique({ where: { id: id } });
+
+    if (!employee) {
+      throw new NotFound("Funcionário não encontrado");
+    }
+
+    const updatedEmployee = await prisma.employee.update({
+      where: { id: id },
+      data: { isBlocked: !employee.isBlocked }
+    });
+
+    if (!updatedEmployee) {
+      throw new InternalServerError("Falha no servidor");
+    }
+
+    return updatedEmployee;
   }
 }
