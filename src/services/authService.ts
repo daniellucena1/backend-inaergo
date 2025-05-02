@@ -20,6 +20,10 @@ export const authService = {
       throw new NotFound("Usuário não encontrado");
     }
 
+    if (user.isBlocked && user.type !== "ADMIN") {
+      throw new Forbidden("Usuário bloqueado");
+    }
+
     return authService.handleLogin(user, password);
   },
 

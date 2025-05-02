@@ -78,5 +78,17 @@ export const userController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async toggleBlockManager(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const response = await userService.toggleBlockManager(parseInt(id));
+      
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
   }
 };
