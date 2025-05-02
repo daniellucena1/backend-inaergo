@@ -18,6 +18,7 @@ model User {
   name       String
   email      String   @unique
   password   String
+  isBlocked  Boolean? @default(false)
   permission Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
@@ -52,7 +53,7 @@ model Employee {
   Company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   Answer        Answer[]
 
-  @@unique(name: "registrationCompanyId",[registration, companyId])
+  @@unique(name: "registrationCompanyId", [registration, companyId])
 }
 
 model Form {

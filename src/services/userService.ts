@@ -119,5 +119,32 @@ export const userService = {
 
   delete: async (id: number) => {
     await prisma.user.delete({ where: { id: id } });
+  },
+
+  toggleBlockManager: async (id: number) => {
+    const user = await prisma.user.findUnique({
+      where: { id: id }
+    });
+
+    if (!user) {
+      throw new NotFound('Usuário não encontrado');
+    }
+
+    if (user.type !== 'MANAGER') {
+      throw new BadRequest('Usuário não é um gerente');
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: id },
+      data: {
+        isBlocked: !user.isBlocked
+      }
+    });
+
+    if (!updatedUser) {
+      throw new BadRequest('Erro ao atualizar usuário');
+    }
+
+    return updatedUser;
   }
 }
